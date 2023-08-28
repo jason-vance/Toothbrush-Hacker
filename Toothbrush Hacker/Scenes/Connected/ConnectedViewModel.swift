@@ -13,16 +13,16 @@ class ConnectedViewModel: ObservableObject {
     
     @Published var currentBatteryLevel: Float = 0
     
-    let bleConnector: BleConnector
-    let batteryMonitor: BleDeviceBatteryMonitor
+    let connector: DeviceConnector
+    let batteryMonitor: DeviceBatteryMonitor
     
     var subs: Set<AnyCancellable> = []
 
     init(
-        bleConnector: BleConnector,
-        batteryMonitor: BleDeviceBatteryMonitor
+        connector: DeviceConnector,
+        batteryMonitor: DeviceBatteryMonitor
     ) {
-        self.bleConnector = bleConnector
+        self.connector = connector
         self.batteryMonitor = batteryMonitor
         
         setupSubscribers()
@@ -40,6 +40,6 @@ class ConnectedViewModel: ObservableObject {
     }
     
     func disconnect() {
-        bleConnector.cancelConnection()
+        connector.cancelConnection()
     }
 }

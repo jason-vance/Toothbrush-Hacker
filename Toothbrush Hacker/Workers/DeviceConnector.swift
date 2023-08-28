@@ -1,5 +1,5 @@
 //
-//  BleConnector.swift
+//  DeviceConnector.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/27/23.
@@ -8,9 +8,14 @@
 import Foundation
 import CoreBluetooth
 
-protocol BleConnector {
+enum ConnectedState {
+    case disconnected
+    case connected
+}
+
+protocol DeviceConnector {
     
-    var connectedStatePublisher: Published<BleConnectedState>.Publisher { get }
+    var connectedStatePublisher: Published<ConnectedState>.Publisher { get }
     var connectedPeripheralPublisher: Published<CBPeripheral?>.Publisher { get }
 
     func connectDevice(withId id: UUID)

@@ -11,13 +11,13 @@ import Combine
 @MainActor
 class AppModel: ObservableObject {
     
-    @Published var connectedState: BleConnectedState = .disconnected
+    @Published var connectedState: ConnectedState = .disconnected
     
-    let bleConnector: BleConnector
+    let bleConnector: DeviceConnector
     
     var subs: Set<AnyCancellable> = []
     
-    init(bleConnector: BleConnector) {
+    init(bleConnector: DeviceConnector) {
         self.bleConnector = bleConnector
         
         bleConnector.connectedStatePublisher

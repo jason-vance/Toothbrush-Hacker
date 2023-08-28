@@ -19,26 +19,16 @@ struct DeviceInformationService {
     static let characteristicUUID = CBUUID(string: "2A19")
 }
 
-enum BleScanningState {
-    case idle
-    case scanning
-}
-
-enum BleConnectedState {
-    case disconnected
-    case connected
-}
-
 //TODO: Separate the scanning/connecting, and the communicating into different classes
 class BleDeviceManager: NSObject {
     
     var centralManager: CBCentralManager! = nil
     
-    @Published var scanningState: BleScanningState = .idle
+    @Published var scanningState: ScanningState = .idle
     @Published var discoveredPeripheral: CBPeripheral? = nil
     @Published var discoveredPeripherals: Set<CBPeripheral> = []
     
-    @Published var connectedState: BleConnectedState = .disconnected
+    @Published var connectedState: ConnectedState = .disconnected
     @Published var connectedPeripheral: CBPeripheral? = nil
     
     @Published var discoveredService: CBService? = nil
@@ -200,9 +190,9 @@ class BleDeviceManager: NSObject {
     }
 }
 
-extension BleDeviceManager: BleScanner {
+extension BleDeviceManager: DeviceScanner {
     
-    var scaninngStatePublisher: Published<BleScanningState>.Publisher {
+    var scaninngStatePublisher: Published<ScanningState>.Publisher {
         $scanningState
     }
     
@@ -215,9 +205,9 @@ extension BleDeviceManager: BleScanner {
     }
 }
 
-extension BleDeviceManager: BleConnector {
+extension BleDeviceManager: DeviceConnector {
     
-    var connectedStatePublisher: Published<BleConnectedState>.Publisher {
+    var connectedStatePublisher: Published<ConnectedState>.Publisher {
         $connectedState
     }
     

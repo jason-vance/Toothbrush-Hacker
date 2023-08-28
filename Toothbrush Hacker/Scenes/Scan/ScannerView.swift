@@ -10,8 +10,8 @@ import SwiftUI
 struct ScannerView: View {
     
     @StateObject var model = ScannerViewModel(
-        bleScanner: BleDeviceManager.instance,
-        bleConnector: BleDeviceManager.instance
+        scanner: BleDeviceManager.instance,
+        connector: BleDeviceManager.instance
     )
     
     var body: some View {

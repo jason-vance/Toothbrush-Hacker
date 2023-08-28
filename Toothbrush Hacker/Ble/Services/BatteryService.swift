@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-class BatteryService: BleDeviceBatteryMonitor {
+class BatteryService: DeviceBatteryMonitor {
     
     static let uuid = CBUUID(string: "180F")
     

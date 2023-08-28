@@ -1,5 +1,5 @@
 //
-//  BleDeviceBatteryMonitor.swift
+//  DeviceBatteryMonitor.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/27/23.
@@ -9,12 +9,12 @@ import Foundation
 import Combine
 import CoreBluetooth
 
-protocol BleDeviceBatteryMonitor {
+protocol DeviceBatteryMonitor {
     
     var currentBatteryLevelPublisher: Published<Float>.Publisher { get }
 }
 
-class DefaultBleDeviceBatteryMonitor: BleDeviceBatteryMonitor {
+class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     
     @Published var currentBatteryLevel: Float = 0
     var currentBatteryLevelPublisher: Published<Float>.Publisher { $currentBatteryLevel }
@@ -55,7 +55,7 @@ class DefaultBleDeviceBatteryMonitor: BleDeviceBatteryMonitor {
         //TODO: Do I actually need to do anything here?
     }
     
-    private func onUpdate(connectedState: BleConnectedState) {
+    private func onUpdate(connectedState: ConnectedState) {
         switch connectedState {
         case .connected:
             onDeviceConnected()

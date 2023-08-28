@@ -1,5 +1,5 @@
 //
-//  BleScanner.swift
+//  DeviceScanner.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/27/23.
@@ -8,9 +8,14 @@
 import Foundation
 import CoreBluetooth
 
-protocol BleScanner {
+enum ScanningState {
+    case idle
+    case scanning
+}
+
+protocol DeviceScanner {
     
-    var scaninngStatePublisher: Published<BleScanningState>.Publisher { get }
+    var scaninngStatePublisher: Published<ScanningState>.Publisher { get }
     var discoveredPeripheralPublisher: Published<CBPeripheral?>.Publisher { get }
     var discoveredPeripheralsPublisher: Published<Set<CBPeripheral>>.Publisher  { get }
     

@@ -11,23 +11,23 @@ import Combine
 @MainActor
 class ScannerViewModel: ObservableObject {
     
-    @Published var scanningState: BleScanningState = .idle
+    @Published var scanningState: ScanningState = .idle
     @Published var devices: [ScannedDevice] = []
     
-    let bleScanner: BleScanner
-    let bleConnector: BleConnector
+    let scanner: DeviceScanner
+    let connector: DeviceConnector
 
     var subs: Set<AnyCancellable> = []
     
-    init(bleScanner: BleScanner, bleConnector: BleConnector) {
-        self.bleScanner = bleScanner
-        self.bleConnector = bleConnector
+    init(scanner: DeviceScanner, connector: DeviceConnector) {
+        self.scanner = scanner
+        self.connector = connector
 
-        bleScanner.scaninngStatePublisher
+        scanner.scaninngStatePublisher
             .sink { self.scanningState = $0 }
             .store(in: &subs)
         
-        bleScanner.discoveredPeripheralsPublisher
+        scanner.discoveredPeripheralsPublisher
             .sink {
                 self.devices = $0.map {
                     ScannedDevice(
@@ -48,14 +48,14 @@ class ScannerViewModel: ObservableObject {
     }
     
     private func startScan() {
-        bleScanner.startScan()
+        scanner.startScan()
     }
     
     private func stopScan() {
-        bleScanner.stopScan()
+        scanner.stopScan()
     }
     
     func connect(device: ScannedDevice) {
-        bleConnector.connectDevice(withId: device.id)
+        connector.connectDevice(withId: device.id)
     }
 }
