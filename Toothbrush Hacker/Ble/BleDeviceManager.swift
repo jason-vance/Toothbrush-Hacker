@@ -1,5 +1,5 @@
 //
-//  BleService.swift
+//  BleDeviceManager.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/26/23.
@@ -12,11 +12,6 @@ import Combine
 struct TransferService {
     static let serviceUUID = CBUUID(string: "E20A39F4-73F5-4BC4-A12F-17D1AD07A961")
     static let characteristicUUID = CBUUID(string: "08590F7E-DB05-467E-8757-72F6FAEB13D4")
-}
-
-struct BatteryService {
-    static let serviceUUID = CBUUID(string: "180F")
-    static let characteristicUUID = CBUUID(string: "2A19")
 }
 
 struct DeviceInformationService {
@@ -34,7 +29,8 @@ enum BleConnectedState {
     case connected
 }
 
-class BleService: NSObject {
+//TODO: Separate the scanning/connecting, and the communicating into different classes
+class BleDeviceManager: NSObject {
     
     var centralManager: CBCentralManager! = nil
     
@@ -44,6 +40,15 @@ class BleService: NSObject {
     
     @Published var connectedState: BleConnectedState = .disconnected
     @Published var connectedPeripheral: CBPeripheral? = nil
+    
+    @Published var discoveredService: CBService? = nil
+    @Published var discoveredServices: Set<CBService> = []
+    @Published var discoveredCharacteristic: CBCharacteristic? = nil
+    @Published var discoveredCharacteristics: Set<CBCharacteristic> = []
+    @Published var discoveredDescriptor: CBDescriptor? = nil
+    @Published var discoveredDescriptors: Set<CBDescriptor> = []
+    
+    @Published var characteristicValueUpdate: CBCharacteristic? = nil
     
     var transferCharacteristic: CBCharacteristic? = nil
     var writeIterationsComplete = 0
@@ -55,8 +60,8 @@ class BleService: NSObject {
     
     var subs: Set<AnyCancellable> = []
     
-    static let instance: BleService = {
-        BleService()
+    static let instance: BleDeviceManager = {
+        BleDeviceManager()
     }()
 
     private override init() {
@@ -72,6 +77,12 @@ class BleService: NSObject {
                 if let peripheral = $0 {
                     self.discoveredPeripherals.insert(peripheral)
                 }
+            }
+            .store(in: &subs)
+        
+        $connectedPeripheral
+            .sink {
+                self.connectedState = $0 == nil ? .disconnected : .connected
             }
             .store(in: &subs)
     }
@@ -97,6 +108,22 @@ class BleService: NSObject {
         guard let peripheral = (discoveredPeripherals.first { $0.identifier == id }) else { return }
         print("Connecting to peripheral \(peripheral)")
         centralManager.connect(peripheral, options: nil)
+    }
+    
+    func discover(services: [CBUUID], on peripheral: CBPeripheral) {
+        peripheral.discoverServices(services)
+    }
+    
+    func discover(characteristics: [CBUUID], for service: CBService, on peripheral: CBPeripheral) {
+        peripheral.discoverCharacteristics(characteristics, for: service)
+    }
+    
+    func discoverDescriptors(for characteristic: CBCharacteristic, on peripheral: CBPeripheral) {
+        peripheral.discoverDescriptors(for: characteristic)
+    }
+    
+    func readValue(for characteristic: CBCharacteristic, on peripheral: CBPeripheral) {
+        peripheral.readValue(for: characteristic)
     }
     
     /*
@@ -173,7 +200,7 @@ class BleService: NSObject {
     }
 }
 
-extension BleService: BleScanner {
+extension BleDeviceManager: BleScanner {
     
     var scaninngStatePublisher: Published<BleScanningState>.Publisher {
         $scanningState
@@ -188,7 +215,7 @@ extension BleService: BleScanner {
     }
 }
 
-extension BleService: BleConnector {
+extension BleDeviceManager: BleConnector {
     
     var connectedStatePublisher: Published<BleConnectedState>.Publisher {
         $connectedState
@@ -203,7 +230,7 @@ extension BleService: BleConnector {
     }
 }
 
-extension BleService: CBCentralManagerDelegate {
+extension BleDeviceManager: CBCentralManagerDelegate {
     // implementations of the CBCentralManagerDelegate methods
 
     /*
@@ -313,7 +340,6 @@ extension BleService: CBCentralManagerDelegate {
         // Stop scanning
         stopScan()
         
-        connectedState = .connected
         connectedPeripheral = peripheral
         
         // set iteration info
@@ -327,7 +353,8 @@ extension BleService: CBCentralManagerDelegate {
         peripheral.delegate = self
         
         // Search only for services that match our UUID
-        peripheral.discoverServices([])
+        //TODO: use the CBUUIDs of the services I'm actually interested in
+//        peripheral.discoverServices([])
     }
     
     /*
@@ -336,7 +363,6 @@ extension BleService: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Perhiperal Disconnected")
         
-        connectedState = .disconnected
         connectedPeripheral = nil
         
         // We're disconnected, so start scanning again
@@ -348,7 +374,7 @@ extension BleService: CBCentralManagerDelegate {
     }
 }
 
-extension BleService: CBPeripheralDelegate {
+extension BleDeviceManager: CBPeripheralDelegate {
     // implementations of the CBPeripheralDelegate methods
 
     /*
@@ -377,7 +403,8 @@ extension BleService: CBPeripheralDelegate {
         guard let peripheralServices = peripheral.services else { return }
         for service in peripheralServices {
             print("Did discover service: \(service.uuid.uuidString)")
-            peripheral.discoverCharacteristics([], for: service)
+            discoveredService = service
+//            peripheral.discoverCharacteristics([], for: service)
         }
     }
     
@@ -397,10 +424,11 @@ extension BleService: CBPeripheralDelegate {
         guard let serviceCharacteristics = service.characteristics else { return }
         for characteristic in serviceCharacteristics {
             print("Did discover characteristic: \(characteristic.uuid.uuidString) in service: \(service.uuid.uuidString)")
-            peripheral.discoverDescriptors(for: characteristic)
-            if characteristic.uuid == CBUUID(string: "2A19") {
-                peripheral.readValue(for: characteristic)
-            }
+            discoveredCharacteristic = characteristic
+//            peripheral.discoverDescriptors(for: characteristic)
+//            if characteristic.uuid == CBUUID(string: "2A19") {
+//                peripheral.readValue(for: characteristic)
+//            }
             // If it is, subscribe to it
 //            transferCharacteristic = characteristic
 //            peripheral.setNotifyValue(true, for: characteristic)
@@ -421,24 +449,11 @@ extension BleService: CBPeripheralDelegate {
         guard let characteristicDescriptors = characteristic.descriptors else { return }
         for descriptor in characteristicDescriptors {
             print("Did discover descriptor: \(descriptor.uuid.uuidString) in characteristic: \(characteristic.uuid.uuidString)")
-            if descriptor.uuid == CBUUID(string: "2904") {
-                peripheral.readValue(for: descriptor)
-            }
+            discoveredDescriptor = descriptor
+//            if descriptor.uuid == CBUUID(string: "2904") {
+//                peripheral.readValue(for: descriptor)
+//            }
         }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
-        // Deal with errors (if any)
-        if let error = error {
-            print("Error reading descriptor value: \(error.localizedDescription)")
-            cleanup()
-            return
-        }
-        
-        guard let descriptorData = descriptor.value as? Data else { return }
-        let byteArray = [UInt8](descriptorData)
-        let byteStrArray = byteArray.map { String(format:"%02X", $0) }
-        print("Received descriptor.value: \(String(describing: descriptorData))")
     }
         
     /*
@@ -452,6 +467,7 @@ extension BleService: CBPeripheralDelegate {
             return
         }
         
+        characteristicValueUpdate = characteristic
         guard let characteristicData = characteristic.value else { return }
         let byteArray = [UInt8](characteristicData)
         guard let stringFromData = String(data: characteristicData, encoding: .utf8) else { return }
@@ -474,6 +490,20 @@ extension BleService: CBPeripheralDelegate {
             // Otherwise, just append the data to what we have previously received.
             data.append(characteristicData)
         }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
+        // Deal with errors (if any)
+        if let error = error {
+            print("Error reading descriptor value: \(error.localizedDescription)")
+            cleanup()
+            return
+        }
+        
+        guard let descriptorData = descriptor.value as? Data else { return }
+        let byteArray = [UInt8](descriptorData)
+        let byteStrArray = byteArray.map { String(format:"%02X", $0) }
+        print("Received descriptor.value: \(String(describing: descriptorData))")
     }
 
     /*

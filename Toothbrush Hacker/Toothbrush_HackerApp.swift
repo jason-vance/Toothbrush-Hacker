@@ -11,7 +11,7 @@ import SwiftUI
 struct Toothbrush_HackerApp: App {
     
     @StateObject var model = AppModel(
-        bleConnector: BleService.instance
+        bleConnector: BleDeviceManager.instance
     )
     
     var body: some Scene {

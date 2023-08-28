@@ -10,7 +10,8 @@ import SwiftUI
 struct ConnectedView: View {
     
     @StateObject var model = ConnectedViewModel(
-        bleConnector: BleService.instance
+        bleConnector: BleDeviceManager.instance,
+        batteryMonitor: DefaultBleDeviceBatteryMonitor(deviceManager: BleDeviceManager.instance)
     )
     
     var body: some View {
