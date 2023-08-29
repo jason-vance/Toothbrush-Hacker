@@ -10,8 +10,12 @@ import SwiftUI
 struct ConnectedView: View {
     
     @StateObject var model = ConnectedViewModel(
-        connector: BleDeviceManager.instance,
-        batteryMonitor: BleDeviceBatteryMonitor(deviceManager: BleDeviceManager.instance)
+        toothbrushConnection: AppModel.instance.toothbrushConnection!,
+        batteryMonitor: BleDeviceBatteryMonitor(
+            deviceCommunicator: BleDeviceCommunicator(
+                connection: AppModel.instance.toothbrushConnection!
+            )
+        )
     )
     
     var body: some View {
@@ -22,6 +26,7 @@ struct ConnectedView: View {
                 model.disconnect()
             }
         }
+        .alert(model.alertMessage, isPresented: $model.showAlert) {}
     }
 }
 

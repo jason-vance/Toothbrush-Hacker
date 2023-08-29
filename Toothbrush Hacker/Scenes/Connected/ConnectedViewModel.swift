@@ -13,16 +13,19 @@ class ConnectedViewModel: ObservableObject {
     
     @Published var currentBatteryLevel: Float = 0
     
-    let connector: DeviceConnector
+    @Published var showAlert: Bool = false
+    @Published var alertMessage: String = ""
+    
+    let toothbrushConnection: BleDeviceConnection
     let batteryMonitor: DeviceBatteryMonitor
     
     var subs: Set<AnyCancellable> = []
 
     init(
-        connector: DeviceConnector,
+        toothbrushConnection: BleDeviceConnection,
         batteryMonitor: DeviceBatteryMonitor
     ) {
-        self.connector = connector
+        self.toothbrushConnection = toothbrushConnection
         self.batteryMonitor = batteryMonitor
         
         setupSubscribers()
@@ -40,6 +43,17 @@ class ConnectedViewModel: ObservableObject {
     }
     
     func disconnect() {
-        connector.cancelConnection()
+        Task {
+            do {
+                try await toothbrushConnection.cancelConnection()
+            } catch {
+                show(alertMessage: "Error while disconnecting")
+            }
+        }
+    }
+    
+    func show(alertMessage: String) {
+        showAlert = true
+        self.alertMessage = alertMessage
     }
 }

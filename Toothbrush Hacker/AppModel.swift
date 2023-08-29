@@ -13,15 +13,37 @@ class AppModel: ObservableObject {
     
     @Published var connectedState: ConnectedState = .disconnected
     
-    let bleConnector: DeviceConnector
+    @Published var showAlert: Bool = false
+    @Published var alertMessage: String = ""
+    
+    var toothbrushConnection: BleDeviceConnection? = nil {
+        didSet {
+            toothbrushConnection?.connectedStatePublisher
+                .receive(on: RunLoop.main)
+                .sink { self.connectedState = $0 }
+                .store(in: &subs)
+        }
+    }
     
     var subs: Set<AnyCancellable> = []
     
-    init(bleConnector: DeviceConnector) {
-        self.bleConnector = bleConnector
-        
-        bleConnector.connectedStatePublisher
-            .sink { self.connectedState = $0 }
-            .store(in: &subs)
+    static let instance: AppModel = AppModel()
+    
+    private init() {}
+    
+    func connect(device: DiscoveredPeripheral) {
+        toothbrushConnection = BleDeviceConnection.create(with: device.peripheral)
+        Task {
+            do {
+                try await toothbrushConnection!.connect()
+            } catch {
+                show(alertMessage: "Failed to connect")
+            }
+        }
+    }
+    
+    func show(alertMessage: String) {
+        showAlert = true
+        self.alertMessage = alertMessage
     }
 }

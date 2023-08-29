@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import CoreBluetooth
 
 struct ScannerView: View {
     
+    var onDeviceSelected: (DiscoveredPeripheral) -> Void
+    
     @StateObject var model = ScannerViewModel(
-        scanner: BleDeviceManager.instance,
-        connector: BleDeviceManager.instance
+        scanner: BleCentralManager.instance
     )
     
     var body: some View {
@@ -20,6 +22,7 @@ struct ScannerView: View {
             ScanButton()
         }
         .background(.gray)
+        .alert(model.alertMessage, isPresented: $model.showAlert) {}
     }
     
     @ViewBuilder func DeviceList() -> some View {
@@ -32,11 +35,12 @@ struct ScannerView: View {
         }
     }
     
-    @ViewBuilder func DeviceItem(_ device: ScannedDevice) -> some View {
+    @ViewBuilder func DeviceItem(_ device: DiscoveredPeripheral) -> some View {
         Button {
-            model.connect(device: device)
+            model.toggleScan()
+            onDeviceSelected(device)
         } label: {
-            Text(device.name)
+            Text(device.peripheral.name ?? "<<Unnamed Device>>")
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .bold()
@@ -74,6 +78,8 @@ struct ScannerView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ScannerView()
+        ScannerView(
+            onDeviceSelected: { _ in }
+        )
     }
 }

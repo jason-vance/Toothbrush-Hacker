@@ -16,8 +16,7 @@ enum ScanningState {
 protocol DeviceScanner {
     
     var scaninngStatePublisher: Published<ScanningState>.Publisher { get }
-    var discoveredPeripheralPublisher: Published<CBPeripheral?>.Publisher { get }
-    var discoveredPeripheralsPublisher: Published<Set<CBPeripheral>>.Publisher  { get }
+    var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { get }
     
     func startScan()
     func stopScan()

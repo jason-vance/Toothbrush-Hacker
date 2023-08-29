@@ -1,5 +1,5 @@
 //
-//  DeviceConnector.swift
+//  DeviceConnection.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/27/23.
@@ -10,14 +10,15 @@ import CoreBluetooth
 
 enum ConnectedState {
     case disconnected
+    case connecting
     case connected
+    case disconnecting
 }
 
-protocol DeviceConnector {
+protocol DeviceConnection {
     
     var connectedStatePublisher: Published<ConnectedState>.Publisher { get }
-    var connectedPeripheralPublisher: Published<CBPeripheral?>.Publisher { get }
 
-    func connectDevice(withId id: UUID)
-    func cancelConnection()
+    func connect() async throws
+    func cancelConnection() async throws
 }

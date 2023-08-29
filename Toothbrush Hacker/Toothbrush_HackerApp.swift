@@ -10,17 +10,33 @@ import SwiftUI
 @main
 struct Toothbrush_HackerApp: App {
     
-    @StateObject var model = AppModel(
-        bleConnector: BleDeviceManager.instance
-    )
+    @StateObject var model = AppModel.instance
     
     var body: some Scene {
         WindowGroup {
-            if model.connectedState == .disconnected {
-                ScannerView()
-            } else {
-                ConnectedView()
-            }
+            ContentView()
+                .overlay {
+                    if model.connectedState == .connecting {
+                        ZStack {
+                            Rectangle()
+                                .background(.ultraThinMaterial)
+                                .ignoresSafeArea()
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                        }
+                    }
+                }
+                .alert(model.alertMessage, isPresented: $model.showAlert) {}
+        }
+    }
+    
+    @ViewBuilder func ContentView() -> some View {
+        if model.connectedState != .connected {
+            ScannerView(
+                onDeviceSelected: { model.connect(device: $0) }
+            )
+        } else {
+            ConnectedView()
         }
     }
 }

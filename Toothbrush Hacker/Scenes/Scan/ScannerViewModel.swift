@@ -7,35 +7,36 @@
 
 import Foundation
 import Combine
+import CoreBluetooth
 
 @MainActor
 class ScannerViewModel: ObservableObject {
     
     @Published var scanningState: ScanningState = .idle
-    @Published var devices: [ScannedDevice] = []
+    @Published var connectedState: ConnectedState = .disconnected
+    @Published var devices: [DiscoveredPeripheral] = []
+    
+    @Published var showAlert: Bool = false
+    @Published var alertMessage: String = ""
     
     let scanner: DeviceScanner
-    let connector: DeviceConnector
 
     var subs: Set<AnyCancellable> = []
     
-    init(scanner: DeviceScanner, connector: DeviceConnector) {
+    init(scanner: DeviceScanner) {
         self.scanner = scanner
-        self.connector = connector
 
         scanner.scaninngStatePublisher
+            .receive(on: RunLoop.main)
             .sink { self.scanningState = $0 }
             .store(in: &subs)
         
-        scanner.discoveredPeripheralsPublisher
-            .sink {
-                self.devices = $0.map {
-                    ScannedDevice(
-                        id: $0.identifier,
-                        name: $0.name ?? "<<Unnamed device>>"
-                    )
-                }
-            }
+        scanner.discoveredPeripheralPublisher
+            .receive(on: RunLoop.main)
+            .dropFirst()
+            .compactMap { $0 }
+            .filter { !self.devices.contains($0) }
+            .sink { self.devices.append($0) }
             .store(in: &subs)
     }
     
@@ -55,7 +56,25 @@ class ScannerViewModel: ObservableObject {
         scanner.stopScan()
     }
     
-    func connect(device: ScannedDevice) {
-        connector.connectDevice(withId: device.id)
+    func connect(device: DiscoveredPeripheral) async -> BleDeviceConnection? {
+        stopScan()
+        
+        let connection = BleDeviceConnection.create(with: device.peripheral)
+        
+        do {
+            connectedState = .connecting
+            try await connection.connect()
+            connectedState = .connected
+            return connection
+        } catch {
+            connectedState = .disconnected
+            show(alertMessage: "Failed to connect")
+            return nil
+        }
+    }
+    
+    func show(alertMessage: String) {
+        showAlert = true
+        self.alertMessage = alertMessage
     }
 }
