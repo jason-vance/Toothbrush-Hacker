@@ -56,23 +56,6 @@ class ScannerViewModel: ObservableObject {
         scanner.stopScan()
     }
     
-    func connect(device: DiscoveredPeripheral) async -> BleDeviceConnection? {
-        stopScan()
-        
-        let connection = BleDeviceConnection.create(with: device.peripheral)
-        
-        do {
-            connectedState = .connecting
-            try await connection.connect()
-            connectedState = .connected
-            return connection
-        } catch {
-            connectedState = .disconnected
-            show(alertMessage: "Failed to connect")
-            return nil
-        }
-    }
-    
     func show(alertMessage: String) {
         showAlert = true
         self.alertMessage = alertMessage

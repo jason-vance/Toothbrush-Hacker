@@ -8,7 +8,11 @@
 import Foundation
 import CoreBluetooth
 
-class BatteryLevelCharacteristic {
+class BatteryLevelCharacteristic: BleCharacteristic {
     
     static let uuid = CBUUID(string: "2A19")
+    
+    init() {
+        super.init(uuid: Self.uuid)
+    }
 }

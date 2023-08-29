@@ -9,11 +9,11 @@ import Foundation
 import CoreBluetooth
 import Combine
 
-class BleDeviceConnection: DeviceConnection {
+class BleDeviceConnection {
     
     private static var connections: [CBPeripheral:BleDeviceConnection] = [:]
     
-    static func create(with peripheral: CBPeripheral) -> BleDeviceConnection {
+    static func getOrCreate(from peripheral: CBPeripheral) -> BleDeviceConnection {
         if !connections.keys.contains(peripheral) {
             let connection = BleDeviceConnection(
                 peripheral: peripheral,
@@ -26,7 +26,6 @@ class BleDeviceConnection: DeviceConnection {
     }
     
     @Published var connectedState: ConnectedState = .disconnected
-    var connectedStatePublisher: Published<ConnectedState>.Publisher { $connectedState }
 
     let peripheral: CBPeripheral
     let centralManager: BleCentralManager
@@ -41,8 +40,6 @@ class BleDeviceConnection: DeviceConnection {
     ) {
         self.peripheral = peripheral
         self.centralManager = centralManager
-
-        listenToMyConnectionEvents()
     }
     
     private func listenToMyConnectionEvents() {
@@ -90,6 +87,7 @@ class BleDeviceConnection: DeviceConnection {
         connectedState = .connecting
         
         print("Connecting to peripheral \(peripheral)")
+        listenToMyConnectionEvents()
         try await withCheckedThrowingContinuation { continuation in
             connectionContinuation = continuation
             centralManager.connect(peripheral: peripheral)

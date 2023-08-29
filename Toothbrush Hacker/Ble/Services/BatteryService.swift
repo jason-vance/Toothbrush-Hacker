@@ -8,10 +8,17 @@
 import Foundation
 import CoreBluetooth
 
-class BatteryService: DeviceBatteryMonitor {
+class BatteryService: BleService, DeviceBatteryMonitor {
     
     static let uuid = CBUUID(string: "180F")
+    static let characteristics: Set<BleCharacteristic> = [
+        BatteryLevelCharacteristic()
+    ]
     
     @Published var currentBatteryLevel: Float = 0
     var currentBatteryLevelPublisher: Published<Float>.Publisher { $currentBatteryLevel }
+    
+    init() {
+        super.init(uuid: Self.uuid, characteristics: Self.characteristics)
+    }
 }

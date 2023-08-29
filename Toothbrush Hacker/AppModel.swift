@@ -18,7 +18,7 @@ class AppModel: ObservableObject {
     
     var toothbrushConnection: BleDeviceConnection? = nil {
         didSet {
-            toothbrushConnection?.connectedStatePublisher
+            toothbrushConnection?.$connectedState
                 .receive(on: RunLoop.main)
                 .sink { self.connectedState = $0 }
                 .store(in: &subs)
@@ -32,7 +32,7 @@ class AppModel: ObservableObject {
     private init() {}
     
     func connect(device: DiscoveredPeripheral) {
-        toothbrushConnection = BleDeviceConnection.create(with: device.peripheral)
+        toothbrushConnection = BleDeviceConnection.getOrCreate(from: device.peripheral)
         Task {
             do {
                 try await toothbrushConnection!.connect()
