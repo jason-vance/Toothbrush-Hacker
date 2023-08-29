@@ -20,7 +20,7 @@
 		564E096A2A9C870300AE3482 /* DeviceBatteryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09692A9C870300AE3482 /* DeviceBatteryMonitor.swift */; };
 		564E096D2A9C884200AE3482 /* BatteryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E096C2A9C884200AE3482 /* BatteryService.swift */; };
 		564E09702A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E096F2A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift */; };
-		564E09732A9C8AE700AE3482 /* CharacteristicPresentationFormatDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09722A9C8AE700AE3482 /* CharacteristicPresentationFormatDescriptor.swift */; };
+		564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09722A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift */; };
 		564E09772A9D6E3F00AE3482 /* BleDeviceConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09762A9D6E3F00AE3482 /* BleDeviceConnection.swift */; };
 		564E097C2A9D755100AE3482 /* StringAsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097B2A9D755100AE3482 /* StringAsError.swift */; };
 		564E097E2A9D775400AE3482 /* BleDeviceCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097D2A9D775400AE3482 /* BleDeviceCommunicator.swift */; };
@@ -31,6 +31,7 @@
 		564E098A2A9E87D200AE3482 /* BleCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09892A9E87D200AE3482 /* BleCharacteristic.swift */; };
 		564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098B2A9E87E200AE3482 /* BleDescriptor.swift */; };
 		564E098E2A9E9B4200AE3482 /* ConnectedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098D2A9E9B4200AE3482 /* ConnectedState.swift */; };
+		564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098F2A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,7 +49,7 @@
 		564E09692A9C870300AE3482 /* DeviceBatteryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBatteryMonitor.swift; sourceTree = "<group>"; };
 		564E096C2A9C884200AE3482 /* BatteryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryService.swift; sourceTree = "<group>"; };
 		564E096F2A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryLevelCharacteristic.swift; sourceTree = "<group>"; };
-		564E09722A9C8AE700AE3482 /* CharacteristicPresentationFormatDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacteristicPresentationFormatDescriptor.swift; sourceTree = "<group>"; };
+		564E09722A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacteristicFormatDescriptor.swift; sourceTree = "<group>"; };
 		564E09762A9D6E3F00AE3482 /* BleDeviceConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleDeviceConnection.swift; sourceTree = "<group>"; };
 		564E097B2A9D755100AE3482 /* StringAsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringAsError.swift; sourceTree = "<group>"; };
 		564E097D2A9D775400AE3482 /* BleDeviceCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleDeviceCommunicator.swift; sourceTree = "<group>"; };
@@ -59,6 +60,7 @@
 		564E09892A9E87D200AE3482 /* BleCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleCharacteristic.swift; sourceTree = "<group>"; };
 		564E098B2A9E87E200AE3482 /* BleDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleDescriptor.swift; sourceTree = "<group>"; };
 		564E098D2A9E9B4200AE3482 /* ConnectedState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedState.swift; sourceTree = "<group>"; };
+		564E098F2A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientCharacteristicConfigurationDescriptor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,7 +188,8 @@
 			isa = PBXGroup;
 			children = (
 				564E098B2A9E87E200AE3482 /* BleDescriptor.swift */,
-				564E09722A9C8AE700AE3482 /* CharacteristicPresentationFormatDescriptor.swift */,
+				564E09722A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift */,
+				564E098F2A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift */,
 			);
 			path = Descriptors;
 			sourceTree = "<group>";
@@ -269,7 +272,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				564E09732A9C8AE700AE3482 /* CharacteristicPresentationFormatDescriptor.swift in Sources */,
+				564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */,
 				564E09772A9D6E3F00AE3482 /* BleDeviceConnection.swift in Sources */,
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
 				564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */,
@@ -280,6 +283,7 @@
 				564E09862A9DF1C500AE3482 /* ConnectionEvent.swift in Sources */,
 				564E09662A9C4C0F00AE3482 /* AppModel.swift in Sources */,
 				564E09702A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift in Sources */,
+				564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */,
 				564E09882A9E87C000AE3482 /* BleService.swift in Sources */,
 				564E098A2A9E87D200AE3482 /* BleCharacteristic.swift in Sources */,
 				564E09642A9C4BA400AE3482 /* ConnectedView.swift in Sources */,

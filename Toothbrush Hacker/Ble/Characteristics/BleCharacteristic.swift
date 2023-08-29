@@ -19,23 +19,20 @@ class BleCharacteristic {
         self.uuid = uuid
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, discovered characteristic: CBCharacteristic) {
+    func communicator(_ communicator: BleDeviceCommunicator, discovered cbCharacteristic: CBCharacteristic) {
         guard self.characteristic == nil else {
             fatalError("My characteristic was already discoverd")
         }
-        self.characteristic = characteristic
-        print("BleCharacteristic discovered characteristic: \(characteristic)")
-//        communicator.discoverDescriptors(for: self)
+        self.characteristic = cbCharacteristic
+        print("BleCharacteristic discovered characteristic: \(cbCharacteristic)")
+        communicator.discoverDescriptors(for: self)
     }
     
-//    func communicator(_ communicator: BleDeviceCommunicator, discovered descriptor: BleDescriptor, for characteristic: CBCharacteristic) {
-//        guard self.service == nil else {
-//            fatalError("My service was already discoverd")
-//        }
-//        self.service = service
-//        print("BleService discovered service: \(service)")
-//        communicator.discoverCharacteristics(for: self)
-//    }
+    func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for characteristic: CBCharacteristic) {
+        guard let descriptor = BleDescriptor.create(with: cbDescriptor) else { return }
+        print("BleCharacteristic discovered descriptor: \(cbDescriptor)")
+        descriptors.insert(descriptor)
+    }
 }
 
 extension BleCharacteristic: Equatable {

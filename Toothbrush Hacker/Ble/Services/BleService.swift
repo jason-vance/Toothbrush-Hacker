@@ -20,12 +20,12 @@ class BleService {
         self.characteristics = characteristics
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, discovered service: CBService) {
+    func communicator(_ communicator: BleDeviceCommunicator, discovered cbService: CBService) {
         guard self.service == nil else {
             fatalError("My service was already discoverd")
         }
-        self.service = service
-        print("BleService discovered service: \(service)")
+        self.service = cbService
+        print("BleService discovered service: \(cbService)")
         communicator.discoverCharacteristics(for: self)
     }
 }

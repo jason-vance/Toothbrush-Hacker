@@ -10,12 +10,23 @@ import CoreBluetooth
 
 class BleDescriptor {
     
-    let uuid: CBUUID
+    var uuid: CBUUID { descriptor.uuid }
     let descriptor: CBDescriptor
     
-    init(uuid: CBUUID, descriptor: CBDescriptor) {
-        self.uuid = uuid
+    init?(descriptor: CBDescriptor) {
         self.descriptor = descriptor
+    }
+    
+    static func create(with cbDescriptor: CBDescriptor) -> BleDescriptor? {
+        let descriptor =
+            CharacteristicFormatDescriptor(descriptor: cbDescriptor) ??
+            ClientCharacteristicConfigurationDescriptor(descriptor: cbDescriptor) ??
+            nil
+            
+        if descriptor == nil {
+            print("Couldn't create BleDescriptor with \(cbDescriptor)")
+        }
+        return descriptor
     }
 }
 

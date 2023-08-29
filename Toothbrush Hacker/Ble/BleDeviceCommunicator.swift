@@ -40,10 +40,10 @@ class BleDeviceCommunicator: NSObject {
         peripheral.discoverCharacteristics(characteristicUuids, for: cbService)
     }
     
-//    func discoverDescriptors(for characteristic: BleCharacteristic) {
-//        guard let cbCharacteristic = characteristic.characteristic else { return }
-//        peripheral.discoverDescriptors(for: cbCharacteristic)
-//    }
+    func discoverDescriptors(for characteristic: BleCharacteristic) {
+        guard let cbCharacteristic = characteristic.characteristic else { return }
+        peripheral.discoverDescriptors(for: cbCharacteristic)
+    }
     
 //    func readValue(for characteristic: CBCharacteristic) {
 //        peripheral.readValue(for: characteristic)
@@ -67,16 +67,16 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         }
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor cbService: CBService, error: Error?) {
         if let error = error {
             //TODO: Surface this error
             print("Error in didDiscoverCharacteristicsFor service: \(error.localizedDescription)")
             return
         }
 
-        guard let cbCharacteristics = service.characteristics else { return }
+        guard let cbCharacteristics = cbService.characteristics else { return }
         for cbCharacteristic in cbCharacteristics {
-            if let service = (services.first { $0.uuid == service.uuid }) {
+            if let service = (services.first { $0.uuid == cbService.uuid }) {
                 if let characteristic = (service.characteristics.first { $0.uuid == cbCharacteristic.uuid }) {
                     characteristic.communicator(self, discovered: cbCharacteristic)
                 }
@@ -84,22 +84,24 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         }
     }
     
-//    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
-//        if let error = error {
-//            //TODO: Surface this error
-//            print("Error in didDiscoverDescriptorsFor characteristic: \(error.localizedDescription)")
-//            return
-//        }
-//
-//        for characteristics in services.flatMap({$0.characteristics.filter({$0.uuid == characteristic.uuid})}) {
-//            let descriptors = characteristic.descriptors.map {
-//                BleDescriptor.with
-//            }
-//        }
-//        guard let cbDescriptors = characteristic.descriptors else { return }
-//        for cbDescriptor in cbDescriptors {
-//        }
-//    }
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor cbCharacteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            //TODO: Surface this error
+            print("Error in didDiscoverDescriptorsFor characteristic: \(error.localizedDescription)")
+            return
+        }
+        
+        //TODO: Change this when services/characteristics are maps
+        for service in services {
+            guard service.uuid == cbCharacteristic.service?.uuid else { continue }
+            for characteristic in service.characteristics {
+                guard characteristic.uuid == cbCharacteristic.uuid else { continue }
+                for cbDescriptor in cbCharacteristic.descriptors ?? [] {
+                    characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
+                }
+            }
+        }
+    }
     
 //    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
 //        if let error = error {
