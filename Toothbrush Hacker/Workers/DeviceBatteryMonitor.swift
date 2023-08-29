@@ -26,68 +26,46 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     init(deviceCommunicator: BleDeviceCommunicator) {
         self.deviceCommunicator = deviceCommunicator
         
-        let batteryLevelCharacteristic = CBMutableCharacteristic(
-            type: BatteryLevelCharacteristic.uuid,
-            properties: .read,
-            value: nil,
-            permissions: .readable
-        )
-        deviceCommunicator.readValue(for: batteryLevelCharacteristic)
-
+        setupSubscribers()
         
-//        deviceCommunicator.$connectedState
-//            .sink(receiveValue: onUpdate(connectedState:))
-//            .store(in: &subs)
-//        deviceCommunicator.$discoveredService
-//            .filter { $0?.uuid == BatteryService.uuid }
-//            .compactMap { $0 }
-//            .sink(receiveValue: onDiscovered(batteryService:))
-//            .store(in: &subs)
-//        deviceCommunicator.$discoveredCharacteristic
-//            .filter { $0?.uuid == BatteryLevelCharacteristic.uuid }
-//            .compactMap { $0 }
-//            .sink(receiveValue: onDiscovered(batteryLevelCharacteristic:))
-//            .store(in: &subs)
-//        deviceCommunicator.$discoveredDescriptor
-//            .filter { $0?.uuid == CharacteristicPresentationFormatDescriptor.uuid }
-//            .compactMap { $0 }
-//            .sink(receiveValue: onDiscovered(presentationFormatDescriptor:))
-//            .store(in: &subs)
-//        deviceCommunicator.$characteristicValueUpdate
-//            .filter { $0?.uuid == BatteryLevelCharacteristic.uuid }
-//            .compactMap { $0 }
-//            .sink(receiveValue: onUpdateValueOf(batteryLevelCharacteristic:))
-//            .store(in: &subs)
+        deviceCommunicator.discover(services: [BatteryService.uuid])
     }
     
-//    private func onUpdate(connectedState: ConnectedState) {
-//        switch connectedState {
-//        case .connected:
-//            onDeviceConnected()
-//        case .disconnected:
-//            cleanUp()
-//        }
-//    }
-//
-//    private func onDeviceConnected() {
-//        guard let peripheral = deviceManager.connectedPeripheral else { return }
-//        deviceManager.discover(services: [BatteryService.uuid], on: peripheral)
-//    }
-//
-//    private func onDiscovered(batteryService: CBService) {
-//        guard let peripheral = deviceManager.connectedPeripheral else { return }
-//        deviceManager.discover(characteristics: [BatteryLevelCharacteristic.uuid], for: batteryService, on: peripheral)
-//    }
+    func setupSubscribers() {
+        deviceCommunicator.$discoveredService
+            .filter { $0?.uuid == BatteryService.uuid }
+            .compactMap { $0 }
+            .sink(receiveValue: onDiscovered(batteryService:))
+            .store(in: &subs)
+        deviceCommunicator.$discoveredCharacteristic
+            .filter { $0?.uuid == BatteryLevelCharacteristic.uuid }
+            .compactMap { $0 }
+            .sink(receiveValue: onDiscovered(batteryLevelCharacteristic:))
+            .store(in: &subs)
+        deviceCommunicator.$discoveredDescriptor
+            .filter { $0?.uuid == CharacteristicPresentationFormatDescriptor.uuid }
+            .compactMap { $0 }
+            .sink(receiveValue: onDiscovered(presentationFormatDescriptor:))
+            .store(in: &subs)
+        deviceCommunicator.$updatedValueCharacteristic
+            .filter { $0?.uuid == BatteryLevelCharacteristic.uuid }
+            .compactMap { $0 }
+            .sink(receiveValue: onUpdateValueOf(batteryLevelCharacteristic:))
+            .store(in: &subs)
+    }
+    
+    private func onDiscovered(batteryService: CBService) {
+        deviceCommunicator.discover(characteristics: [BatteryLevelCharacteristic.uuid], for: batteryService)
+    }
     
     private func onDiscovered(batteryLevelCharacteristic: CBCharacteristic) {
-//        guard let peripheral = deviceManager.connectedPeripheral else { return }
-////        deviceManager.discoverDescriptors(for: batteryLevelCharateristic, on: peripheral)
-//        deviceManager.readValue(for: batteryLevelCharacteristic, on: peripheral)
+//        deviceCommunicator.discoverDescriptors(for: batteryLevelCharateristic)
+        deviceCommunicator.readValue(for: batteryLevelCharacteristic)
     }
     
-//    private func onDiscovered(presentationFormatDescriptor: CBDescriptor) {
-//
-//    }
+    private func onDiscovered(presentationFormatDescriptor: CBDescriptor) {
+
+    }
     
     private func onUpdateValueOf(batteryLevelCharacteristic: CBCharacteristic) {
         guard let batteryLevelData = batteryLevelCharacteristic.value else { return }
@@ -96,5 +74,4 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
         
         print("BleDeviceBatteryMonitor received batteryLevel: \(batteryLevel)")
     }
-    
 }

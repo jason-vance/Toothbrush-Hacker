@@ -126,6 +126,7 @@
 		564E09582A9B487A00AE3482 /* Ble */ = {
 			isa = PBXGroup;
 			children = (
+				564E09852A9DF1C500AE3482 /* ConnectionEvent.swift */,
 				564E097F2A9DC2FE00AE3482 /* DiscoveredPeripheral.swift */,
 				564E09832A9DE59100AE3482 /* BleCentralManager.swift */,
 				564E09592A9B48EC00AE3482 /* BleDeviceManager.swift */,
@@ -134,7 +135,6 @@
 				564E096B2A9C883800AE3482 /* Services */,
 				564E096E2A9C8A5300AE3482 /* Characteristics */,
 				564E09712A9C8ABB00AE3482 /* Descriptors */,
-				564E09852A9DF1C500AE3482 /* ConnectionEvent.swift */,
 			);
 			path = Ble;
 			sourceTree = "<group>";
