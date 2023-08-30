@@ -25,11 +25,8 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        let connection = BleDeviceConnection.getOrCreate(from: device)
-        let communicator = BleDeviceCommunicator(
-            connection: connection,
-            services: [batteryService]
-        )
+        let communicator = BleDeviceCommunicator.getOrCreate(from: device)
+        communicator.add(services: [batteryService])
         deviceCommunicator = communicator
         
         setupBatteryLevelSub()

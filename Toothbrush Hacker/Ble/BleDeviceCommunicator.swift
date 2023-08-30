@@ -8,20 +8,30 @@
 import Foundation
 import CoreBluetooth
 
-//TODO: I should probably get this object from the connection (ie. connection.getCommunicator())
-//TODO: These should probably be unique to the peripheral like BleDeviceConnection is
 class BleDeviceCommunicator: NSObject {
+    
+    private static var communicators: [CBPeripheral:BleDeviceCommunicator] = [:]
+    
+    static func getOrCreate(from peripheral: CBPeripheral) -> BleDeviceCommunicator {
+        if !communicators.keys.contains(peripheral) {
+            let communicator = BleDeviceCommunicator(
+                connection: BleDeviceConnection.getOrCreate(from: peripheral)
+            )
+            communicators[peripheral] = communicator
+        }
+        
+        return communicators[peripheral]!
+    }
     
     private let connection: BleDeviceConnection
     private var peripheral: CBPeripheral { connection.peripheral }
     private var services: [CBUUID:BleService] = [:]
     
-    init(connection: BleDeviceConnection, services: [BleService]) {
+    private init(connection: BleDeviceConnection) {
         self.connection = connection
         super.init()
         
         peripheral.delegate = self
-        add(services: services)
     }
     
     func add(services: [BleService]) {
@@ -83,6 +93,8 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         for cbCharacteristic in cbService.characteristics ?? [] {
             if let characteristic = services[serviceUuid]?.characteristics[cbCharacteristic.uuid] {
                 characteristic.communicator(self, discovered: cbCharacteristic)
+            } else {
+                print("didDiscoverCharacteristic: \(cbCharacteristic) uuid: \(cbCharacteristic.uuid.uuidString)")
             }
         }
     }

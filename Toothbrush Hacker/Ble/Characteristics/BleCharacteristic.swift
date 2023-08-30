@@ -22,7 +22,8 @@ class BleCharacteristic {
     
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbCharacteristic: CBCharacteristic) {
         guard self.characteristic == nil else {
-            fatalError("My characteristic was already discoverd")
+            print("My characteristic was already discoverd")
+            return
         }
         self.characteristic = cbCharacteristic
         print("BleCharacteristic discovered characteristic: \(cbCharacteristic)")
