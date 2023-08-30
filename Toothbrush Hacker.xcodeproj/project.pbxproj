@@ -32,6 +32,7 @@
 		564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098B2A9E87E200AE3482 /* BleDescriptor.swift */; };
 		564E098E2A9E9B4200AE3482 /* ConnectedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098D2A9E9B4200AE3482 /* ConnectedState.swift */; };
 		564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E098F2A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift */; };
+		564E09932A9EB98100AE3482 /* ByteArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09922A9EB98100AE3482 /* ByteArrayExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		564E098B2A9E87E200AE3482 /* BleDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleDescriptor.swift; sourceTree = "<group>"; };
 		564E098D2A9E9B4200AE3482 /* ConnectedState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedState.swift; sourceTree = "<group>"; };
 		564E098F2A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientCharacteristicConfigurationDescriptor.swift; sourceTree = "<group>"; };
+		564E09922A9EB98100AE3482 /* ByteArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteArrayExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 				564E096B2A9C883800AE3482 /* Services */,
 				564E096E2A9C8A5300AE3482 /* Characteristics */,
 				564E09712A9C8ABB00AE3482 /* Descriptors */,
+				564E09912A9EB96200AE3482 /* Utils */,
 			);
 			path = Ble;
 			sourceTree = "<group>";
@@ -200,6 +203,14 @@
 				564E097B2A9D755100AE3482 /* StringAsError.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		564E09912A9EB96200AE3482 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				564E09922A9EB98100AE3482 /* ByteArrayExtensions.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,6 +306,7 @@
 				564E09842A9DE59100AE3482 /* BleCentralManager.swift in Sources */,
 				564E096A2A9C870300AE3482 /* DeviceBatteryMonitor.swift in Sources */,
 				564E096D2A9C884200AE3482 /* BatteryService.swift in Sources */,
+				564E09932A9EB98100AE3482 /* ByteArrayExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,6 +28,12 @@ class BleDescriptor {
         }
         return descriptor
     }
+    
+    func communicator(_ communicator: BleDeviceCommunicator, didUpdateValueFor cbDescriptor: CBDescriptor) {
+        guard let data = cbDescriptor.value as? Data else { return }
+        let byteArray = [UInt8](data)
+        print("BleDescriptor.didUpdateValueFor \(cbDescriptor) bytes: \(byteArray)")
+    }
 }
 
 extension BleDescriptor: Equatable {

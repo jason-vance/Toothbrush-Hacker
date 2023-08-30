@@ -45,6 +45,10 @@ class BleDeviceCommunicator: NSObject {
         peripheral.discoverDescriptors(for: cbCharacteristic)
     }
     
+    func readValue(for descriptor: BleDescriptor) {
+        peripheral.readValue(for: descriptor.descriptor)
+    }
+    
 //    func readValue(for characteristic: CBCharacteristic) {
 //        peripheral.readValue(for: characteristic)
 //    }
@@ -98,6 +102,26 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
                 guard characteristic.uuid == cbCharacteristic.uuid else { continue }
                 for cbDescriptor in cbCharacteristic.descriptors ?? [] {
                     characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
+                }
+            }
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor cbDescriptor: CBDescriptor, error: Error?) {
+        if let error = error {
+            //TODO: Surface this error
+            print("Error in didUpdateValueFor descriptor: \(error.localizedDescription)")
+            return
+        }
+        
+        //TODO: Change this when services/characteristics are maps
+        for service in services {
+            guard service.uuid == cbDescriptor.characteristic?.service?.uuid else { continue }
+            for characteristic in service.characteristics {
+                guard characteristic.uuid == cbDescriptor.characteristic?.uuid else { continue }
+                for descriptor in characteristic.descriptors{
+                    guard descriptor.uuid == cbDescriptor.uuid else { continue }
+                    descriptor.communicator(self, didUpdateValueFor: cbDescriptor)
                 }
             }
         }

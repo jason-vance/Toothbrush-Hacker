@@ -28,10 +28,11 @@ class BleCharacteristic {
         communicator.discoverDescriptors(for: self)
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for characteristic: CBCharacteristic) {
+    func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
         guard let descriptor = BleDescriptor.create(with: cbDescriptor) else { return }
         print("BleCharacteristic discovered descriptor: \(cbDescriptor)")
         descriptors.insert(descriptor)
+        communicator.readValue(for: descriptor)
     }
 }
 

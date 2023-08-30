@@ -9,6 +9,7 @@ import Foundation
 import CoreBluetooth
 
 class ClientCharacteristicConfigurationDescriptor: BleDescriptor {
+    
     static let uuid = CBUUID(string: "2902")
     
     override init?(descriptor: CBDescriptor) {
