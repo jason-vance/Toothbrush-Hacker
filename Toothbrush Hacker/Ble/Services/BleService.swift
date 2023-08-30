@@ -11,11 +11,10 @@ import CoreBluetooth
 class BleService {
     
     let uuid: CBUUID
-    //TODO: I should probably make this a map instead of a set
-    let characteristics: Set<BleCharacteristic>
+    let characteristics: [CBUUID:BleCharacteristic]
     private(set) var service: CBService? = nil
     
-    init(uuid: CBUUID, characteristics: Set<BleCharacteristic>) {
+    init(uuid: CBUUID, characteristics: [CBUUID:BleCharacteristic]) {
         self.uuid = uuid
         self.characteristics = characteristics
     }

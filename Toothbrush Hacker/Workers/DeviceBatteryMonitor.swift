@@ -26,7 +26,10 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     
     init(device: CBPeripheral) {
         let connection = BleDeviceConnection.getOrCreate(from: device)
-        let communicator = BleDeviceCommunicator(connection: connection, services: [batteryService])
+        let communicator = BleDeviceCommunicator(
+            connection: connection,
+            services: [batteryService]
+        )
         deviceCommunicator = communicator
     }
 }

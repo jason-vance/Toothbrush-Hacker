@@ -11,8 +11,7 @@ import CoreBluetooth
 class BleCharacteristic {
     
     let uuid: CBUUID
-    //TODO: I should probably make this a map instead of a set
-    private(set) var descriptors: Set<BleDescriptor> = []
+    private(set) var descriptors: [CBUUID:BleDescriptor] = [:]
     private(set) var characteristic: CBCharacteristic? = nil
     
     init(uuid: CBUUID) {
@@ -31,7 +30,8 @@ class BleCharacteristic {
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
         guard let descriptor = BleDescriptor.create(with: cbDescriptor) else { return }
         print("BleCharacteristic discovered descriptor: \(cbDescriptor)")
-        descriptors.insert(descriptor)
+        
+        descriptors[descriptor.uuid] = descriptor
         communicator.readValue(for: descriptor)
     }
 }

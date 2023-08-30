@@ -14,10 +14,9 @@ class BleDeviceCommunicator: NSObject {
     
     private let connection: BleDeviceConnection
     private var peripheral: CBPeripheral { connection.peripheral }
-    //TODO: I should probably make this a map instead of a set
-    private var services: Set<BleService> = []
+    private var services: [CBUUID:BleService] = [:]
     
-    init(connection: BleDeviceConnection, services: Set<BleService>) {
+    init(connection: BleDeviceConnection, services: [BleService]) {
         self.connection = connection
         super.init()
         
@@ -25,18 +24,19 @@ class BleDeviceCommunicator: NSObject {
         add(services: services)
     }
     
-    func add(services: Set<BleService>) {
-        let newServices = services.subtracting(self.services)
-        self.services = self.services.union(services)
-
+    func add(services: [BleService]) {
+        let existingServiceSet = Set(self.services.values.map { $0 as BleService })
+        let newServices = Set(services).subtracting(existingServiceSet)
         guard !newServices.isEmpty else { return }
+        
+        newServices.forEach { self.services[$0.uuid] = $0 }
         let serviceUuids = newServices.map { $0.uuid }
         peripheral.discoverServices(serviceUuids)
     }
     
     func discoverCharacteristics(for service: BleService) {
         guard let cbService = service.service else { return }
-        let characteristicUuids = service.characteristics.map { $0.uuid }
+        let characteristicUuids = service.characteristics.keys.map { $0 as CBUUID }
         peripheral.discoverCharacteristics(characteristicUuids, for: cbService)
     }
     
@@ -63,9 +63,8 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             return
         }
         
-        guard let cbServices = peripheral.services else { return }
-        for cbService in cbServices {
-            if let service = (services.first { $0.uuid == cbService.uuid }) {
+        for cbService in peripheral.services ?? [] {
+            if let service = services[cbService.uuid] {
                 service.communicator(self, discovered: cbService)
             }
         }
@@ -77,13 +76,12 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             print("Error in didDiscoverCharacteristicsFor service: \(error.localizedDescription)")
             return
         }
-
-        guard let cbCharacteristics = cbService.characteristics else { return }
-        for cbCharacteristic in cbCharacteristics {
-            if let service = (services.first { $0.uuid == cbService.uuid }) {
-                if let characteristic = (service.characteristics.first { $0.uuid == cbCharacteristic.uuid }) {
-                    characteristic.communicator(self, discovered: cbCharacteristic)
-                }
+        
+        let serviceUuid = cbService.uuid
+        
+        for cbCharacteristic in cbService.characteristics ?? [] {
+            if let characteristic = services[serviceUuid]?.characteristics[cbCharacteristic.uuid] {
+                characteristic.communicator(self, discovered: cbCharacteristic)
             }
         }
     }
@@ -95,14 +93,12 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             return
         }
         
-        //TODO: Change this when services/characteristics are maps
-        for service in services {
-            guard service.uuid == cbCharacteristic.service?.uuid else { continue }
-            for characteristic in service.characteristics {
-                guard characteristic.uuid == cbCharacteristic.uuid else { continue }
-                for cbDescriptor in cbCharacteristic.descriptors ?? [] {
-                    characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
-                }
+        guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
+        let characteristicUuid = cbCharacteristic.uuid
+        
+        if let characteristic = services[serviceUuid]?.characteristics[characteristicUuid] {
+            for cbDescriptor in cbCharacteristic.descriptors ?? [] {
+                characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
             }
         }
     }
@@ -114,16 +110,12 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             return
         }
         
-        //TODO: Change this when services/characteristics are maps
-        for service in services {
-            guard service.uuid == cbDescriptor.characteristic?.service?.uuid else { continue }
-            for characteristic in service.characteristics {
-                guard characteristic.uuid == cbDescriptor.characteristic?.uuid else { continue }
-                for descriptor in characteristic.descriptors{
-                    guard descriptor.uuid == cbDescriptor.uuid else { continue }
-                    descriptor.communicator(self, didUpdateValueFor: cbDescriptor)
-                }
-            }
+        guard let serviceUuid = cbDescriptor.characteristic?.service?.uuid else { return }
+        guard let characteristicUuid = cbDescriptor.characteristic?.uuid else { return }
+        let descriptorUuid = cbDescriptor.uuid
+        
+        if let descriptor = services[serviceUuid]?.characteristics[characteristicUuid]?.descriptors[descriptorUuid] {
+            descriptor.communicator(self, didUpdateValueFor: cbDescriptor)
         }
     }
     
