@@ -14,6 +14,7 @@ class ConnectedViewModel: ObservableObject {
     @Published var currentBatteryLevel: Double? = nil
     @Published var manufacturerName: String? = nil
     @Published var modelNumber: String? = nil
+    @Published var serialNumber: String? = nil
 
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
@@ -56,6 +57,10 @@ class ConnectedViewModel: ObservableObject {
         deviceInfoReader.modelNumberPublisher
             .receive(on: RunLoop.main)
             .sink { self.modelNumber = $0 }
+            .store(in: &subs)
+        deviceInfoReader.serialNumberPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.serialNumber = $0 }
             .store(in: &subs)
     }
     

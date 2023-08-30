@@ -12,13 +12,15 @@ import CoreBluetooth
 protocol DeviceInformationReader {
     var manufacturerNamePublisher: Published<String?>.Publisher { get }
     var modelNumberPublisher: Published<String?>.Publisher { get }
+    var serialNumberPublisher: Published<String?>.Publisher { get }
 }
 
 class BleDeviceInformationReader: DeviceInformationReader {
     
     var manufacturerNamePublisher: Published<String?>.Publisher { deviceInfoService.manufacturerNamePublisher }
     var modelNumberPublisher: Published<String?>.Publisher { deviceInfoService.modelNumberPublisher }
-    
+    var serialNumberPublisher: Published<String?>.Publisher { deviceInfoService.serialNumberPublisher }
+
     let deviceCommunicator: BleDeviceCommunicator
     let deviceInfoService = DeviceInformationService()
     

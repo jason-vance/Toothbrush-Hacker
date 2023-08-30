@@ -14,26 +14,29 @@ class DeviceInformationService: BleService {
     
     var manufacturerNamePublisher: Published<String?>.Publisher { manufacturerNameCharacteristic.$manufacturerName }
     var modelNumberPublisher: Published<String?>.Publisher { modelNumberCharacteristic.$modelNumber }
+    var serialNumberPublisher: Published<String?>.Publisher { serialNumberCharacteristic.$serialNumber }
 
     private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
     private let modelNumberCharacteristic: ModelNumberCharacteristic
+    private let serialNumberCharacteristic: SerialNumberCharacteristic
 
     init() {
         manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
         modelNumberCharacteristic = ModelNumberCharacteristic()
-        
+        serialNumberCharacteristic = SerialNumberCharacteristic()
+
         super.init(
             uuid: Self.uuid,
             characteristics: [
                 manufacturerNameCharacteristic.uuid: manufacturerNameCharacteristic,
                 modelNumberCharacteristic.uuid: modelNumberCharacteristic,
+                serialNumberCharacteristic.uuid: serialNumberCharacteristic,
             ]
         )
     }
 }
 
 /*
- didDiscoverCharacteristic: <CBCharacteristic: 0x281030c00, UUID = Model Number String, properties = 0x2, value = (null), notifying = NO> uuid: 2A24
  didDiscoverCharacteristic: <CBCharacteristic: 0x2810308a0, UUID = Serial Number String, properties = 0x2, value = (null), notifying = NO> uuid: 2A25
  didDiscoverCharacteristic: <CBCharacteristic: 0x281030a80, UUID = Hardware Revision String, properties = 0x2, value = (null), notifying = NO> uuid: 2A27
  didDiscoverCharacteristic: <CBCharacteristic: 0x2810309c0, UUID = Firmware Revision String, properties = 0x2, value = (null), notifying = NO> uuid: 2A26

@@ -36,6 +36,7 @@
 		564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */; };
 		564E09992A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */; };
 		564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */; };
+		564E099D2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E099C2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformationService.swift; sourceTree = "<group>"; };
 		564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturerNameCharacteristic.swift; sourceTree = "<group>"; };
 		564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelNumberCharacteristic.swift; sourceTree = "<group>"; };
+		564E099C2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialNumberCharacteristic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 				564E096F2A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift */,
 				564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */,
 				564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */,
+				564E099C2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift */,
 			);
 			path = Characteristics;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				564E09882A9E87C000AE3482 /* BleService.swift in Sources */,
 				564E098A2A9E87D200AE3482 /* BleCharacteristic.swift in Sources */,
 				564E09642A9C4BA400AE3482 /* ConnectedView.swift in Sources */,
+				564E099D2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift in Sources */,
 				564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */,
 				564E098E2A9E9B4200AE3482 /* ConnectedState.swift in Sources */,
 				564E095D2A9C43AE00AE3482 /* DeviceScanner.swift in Sources */,

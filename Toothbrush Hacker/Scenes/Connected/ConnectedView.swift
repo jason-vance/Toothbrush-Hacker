@@ -41,6 +41,8 @@ struct ConnectedView: View {
                 .font(.title.bold())
             DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
             DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "--")
+            DeviceInfoLabel("Serial Number:", value: model.serialNumber ?? "--")
+            //TODO: Do the rest of these device info things
         }
         .frame(maxWidth: .infinity)
         .padding()
