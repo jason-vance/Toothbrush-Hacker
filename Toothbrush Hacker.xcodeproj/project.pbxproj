@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5607C7092A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7082A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift */; };
+		5607C70B2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C70A2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift */; };
+		5607C70D2A9FFA2700E90A3B /* SoftwareRevisionCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C70C2A9FFA2700E90A3B /* SoftwareRevisionCharacteristic.swift */; };
+		5607C70F2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C70E2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift */; };
+		5607C7112A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7102A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift */; };
+		5607C7132A9FFA6200E90A3B /* PnpIdCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */; };
 		564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */; };
 		564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09442A9B3C0900AE3482 /* ScannerView.swift */; };
 		564E09472A9B3C0B00AE3482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09462A9B3C0B00AE3482 /* Assets.xcassets */; };
@@ -40,6 +46,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5607C7082A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardwareRevisionCharacteristic.swift; sourceTree = "<group>"; };
+		5607C70A2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirmwareRevisionCharacteristic.swift; sourceTree = "<group>"; };
+		5607C70C2A9FFA2700E90A3B /* SoftwareRevisionCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareRevisionCharacteristic.swift; sourceTree = "<group>"; };
+		5607C70E2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIdCharacteristic.swift; sourceTree = "<group>"; };
+		5607C7102A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IeeeRegulatoryCertificationCharacteristic.swift; sourceTree = "<group>"; };
+		5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnpIdCharacteristic.swift; sourceTree = "<group>"; };
 		564E093F2A9B3C0900AE3482 /* Toothbrush Hacker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Toothbrush Hacker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toothbrush_HackerApp.swift; sourceTree = "<group>"; };
 		564E09442A9B3C0900AE3482 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -195,6 +207,12 @@
 				564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */,
 				564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */,
 				564E099C2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift */,
+				5607C7082A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift */,
+				5607C70A2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift */,
+				5607C70C2A9FFA2700E90A3B /* SoftwareRevisionCharacteristic.swift */,
+				5607C70E2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift */,
+				5607C7102A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift */,
+				5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */,
 			);
 			path = Characteristics;
 			sourceTree = "<group>";
@@ -297,6 +315,7 @@
 			files = (
 				564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */,
 				564E09772A9D6E3F00AE3482 /* BleDeviceConnection.swift in Sources */,
+				5607C7092A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift in Sources */,
 				564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */,
 				564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */,
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
@@ -307,21 +326,26 @@
 				564E09862A9DF1C500AE3482 /* ConnectionEvent.swift in Sources */,
 				564E09662A9C4C0F00AE3482 /* AppModel.swift in Sources */,
 				564E09992A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift in Sources */,
+				5607C70D2A9FFA2700E90A3B /* SoftwareRevisionCharacteristic.swift in Sources */,
 				564E09702A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift in Sources */,
 				564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */,
 				564E09952A9F2F9100AE3482 /* DeviceInformationReader.swift in Sources */,
 				564E09882A9E87C000AE3482 /* BleService.swift in Sources */,
+				5607C70F2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift in Sources */,
 				564E098A2A9E87D200AE3482 /* BleCharacteristic.swift in Sources */,
 				564E09642A9C4BA400AE3482 /* ConnectedView.swift in Sources */,
 				564E099D2A9F3E1800AE3482 /* SerialNumberCharacteristic.swift in Sources */,
 				564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */,
 				564E098E2A9E9B4200AE3482 /* ConnectedState.swift in Sources */,
+				5607C7132A9FFA6200E90A3B /* PnpIdCharacteristic.swift in Sources */,
 				564E095D2A9C43AE00AE3482 /* DeviceScanner.swift in Sources */,
 				564E09802A9DC2FE00AE3482 /* DiscoveredPeripheral.swift in Sources */,
 				564E09552A9B3CAA00AE3482 /* ScannerViewModel.swift in Sources */,
 				564E09842A9DE59100AE3482 /* BleCentralManager.swift in Sources */,
+				5607C7112A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift in Sources */,
 				564E096A2A9C870300AE3482 /* DeviceBatteryMonitor.swift in Sources */,
 				564E096D2A9C884200AE3482 /* BatteryService.swift in Sources */,
+				5607C70B2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift in Sources */,
 				564E09932A9EB98100AE3482 /* ByteArrayExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

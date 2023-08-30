@@ -15,6 +15,12 @@ class ConnectedViewModel: ObservableObject {
     @Published var manufacturerName: String? = nil
     @Published var modelNumber: String? = nil
     @Published var serialNumber: String? = nil
+    @Published var hardwareRevision: String? = nil
+    @Published var firmwareRevision: String? = nil
+    @Published var softwareRevision: String? = nil
+    @Published var systemId: String? = nil
+    @Published var ieeeCertification: String? = nil
+    @Published var pnpId: String? = nil
 
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
@@ -61,6 +67,30 @@ class ConnectedViewModel: ObservableObject {
         deviceInfoReader.serialNumberPublisher
             .receive(on: RunLoop.main)
             .sink { self.serialNumber = $0 }
+            .store(in: &subs)
+        deviceInfoReader.hardwareRevisionPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.hardwareRevision = $0 }
+            .store(in: &subs)
+        deviceInfoReader.firmwareRevisionPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.firmwareRevision = $0 }
+            .store(in: &subs)
+        deviceInfoReader.softwareRevisionPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.softwareRevision = $0 }
+            .store(in: &subs)
+        deviceInfoReader.systemIdPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.systemId = $0 }
+            .store(in: &subs)
+        deviceInfoReader.ieeeRegulatoryCertificationPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.ieeeCertification = $0 }
+            .store(in: &subs)
+        deviceInfoReader.pnpIdPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.pnpId = $0 }
             .store(in: &subs)
     }
     

@@ -11,10 +11,10 @@ import CoreBluetooth
 class BleService {
     
     let uuid: CBUUID
-    let characteristics: [CBUUID:BleCharacteristic]
+    let characteristics: [CBUUID:BleCharacteristicProtocol]
     private(set) var service: CBService? = nil
     
-    init(uuid: CBUUID, characteristics: [CBUUID:BleCharacteristic]) {
+    init(uuid: CBUUID, characteristics: [CBUUID:BleCharacteristicProtocol]) {
         self.uuid = uuid
         self.characteristics = characteristics
     }

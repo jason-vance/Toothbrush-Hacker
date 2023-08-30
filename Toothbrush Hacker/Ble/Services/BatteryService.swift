@@ -12,12 +12,13 @@ class BatteryService: BleService {
     
     static let uuid = CBUUID(string: "180F")
 
-    var batteryLevelPublisher: Published<Double?>.Publisher { batteryLevelCharacteristic.$batteryLevel }
+    var batteryLevelPublisher: Published<Int?>.Publisher { batteryLevelCharacteristic.$value }
     
     private let batteryLevelCharacteristic: BatteryLevelCharacteristic
     
     init() {
         batteryLevelCharacteristic = BatteryLevelCharacteristic()
+        
         super.init(
             uuid: Self.uuid,
             characteristics: [batteryLevelCharacteristic.uuid: batteryLevelCharacteristic]

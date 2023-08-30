@@ -50,7 +50,7 @@ class BleDeviceCommunicator: NSObject {
         peripheral.discoverCharacteristics(characteristicUuids, for: cbService)
     }
     
-    func discoverDescriptors(for characteristic: BleCharacteristic) {
+    func discoverDescriptors(for characteristic: BleCharacteristicProtocol) {
         guard let cbCharacteristic = characteristic.characteristic else { return }
         peripheral.discoverDescriptors(for: cbCharacteristic)
     }
@@ -59,12 +59,12 @@ class BleDeviceCommunicator: NSObject {
         peripheral.readValue(for: descriptor.descriptor)
     }
     
-    func readValue(for characteristic: BleCharacteristic) {
+    func readValue(for characteristic: BleCharacteristicProtocol) {
         guard let cbCharacteristic = characteristic.characteristic else { return }
         peripheral.readValue(for: cbCharacteristic)
     }
     
-    func startNotifications(for characteristic: BleCharacteristic) {
+    func startNotifications(for characteristic: BleCharacteristicProtocol) {
         guard let cbCharacteristic = characteristic.characteristic else { return }
         peripheral.setNotifyValue(true, for: cbCharacteristic)
     }

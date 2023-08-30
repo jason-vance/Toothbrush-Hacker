@@ -12,18 +12,36 @@ class DeviceInformationService: BleService {
     
     static let uuid = CBUUID(string: "180A")
     
-    var manufacturerNamePublisher: Published<String?>.Publisher { manufacturerNameCharacteristic.$manufacturerName }
-    var modelNumberPublisher: Published<String?>.Publisher { modelNumberCharacteristic.$modelNumber }
-    var serialNumberPublisher: Published<String?>.Publisher { serialNumberCharacteristic.$serialNumber }
+    var manufacturerNamePublisher: Published<String?>.Publisher { manufacturerNameCharacteristic.$value }
+    var modelNumberPublisher: Published<String?>.Publisher { modelNumberCharacteristic.$value }
+    var serialNumberPublisher: Published<String?>.Publisher { serialNumberCharacteristic.$value }
+    var hardwareRevisionPublisher: Published<String?>.Publisher { hardwareRevisionCharacteristic.$value }
+    var firmwareRevisionPublisher: Published<String?>.Publisher { firmwareRevisionCharacteristic.$value }
+    var softwareRevisionPublisher: Published<String?>.Publisher { softwareRevisionCharacteristic.$value }
+    var systemIdPublisher: Published<String?>.Publisher { systemIdCharacteristic.$value }
+    var ieeeRegulatoryCertificationPublisher: Published<String?>.Publisher { ieeeRegulatoryCertificationCharacteristic.$value }
+    var pnpIdPublisher: Published<String?>.Publisher { pnpIdCharacteristic.$value }
 
     private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
     private let modelNumberCharacteristic: ModelNumberCharacteristic
     private let serialNumberCharacteristic: SerialNumberCharacteristic
+    private let hardwareRevisionCharacteristic: HardwareRevisionCharacteristic
+    private let firmwareRevisionCharacteristic: FirmwareRevisionCharacteristic
+    private let softwareRevisionCharacteristic: SoftwareRevisionCharacteristic
+    private let systemIdCharacteristic: SystemIdCharacteristic
+    private let ieeeRegulatoryCertificationCharacteristic: IeeeRegulatoryCertificationCharacteristic
+    private let pnpIdCharacteristic: PnpIdCharacteristic
 
     init() {
         manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
         modelNumberCharacteristic = ModelNumberCharacteristic()
         serialNumberCharacteristic = SerialNumberCharacteristic()
+        hardwareRevisionCharacteristic = HardwareRevisionCharacteristic()
+        firmwareRevisionCharacteristic = FirmwareRevisionCharacteristic()
+        softwareRevisionCharacteristic = SoftwareRevisionCharacteristic()
+        systemIdCharacteristic = SystemIdCharacteristic()
+        ieeeRegulatoryCertificationCharacteristic = IeeeRegulatoryCertificationCharacteristic()
+        pnpIdCharacteristic = PnpIdCharacteristic()
 
         super.init(
             uuid: Self.uuid,
@@ -31,18 +49,13 @@ class DeviceInformationService: BleService {
                 manufacturerNameCharacteristic.uuid: manufacturerNameCharacteristic,
                 modelNumberCharacteristic.uuid: modelNumberCharacteristic,
                 serialNumberCharacteristic.uuid: serialNumberCharacteristic,
+                hardwareRevisionCharacteristic.uuid: hardwareRevisionCharacteristic,
+                firmwareRevisionCharacteristic.uuid: firmwareRevisionCharacteristic,
+                softwareRevisionCharacteristic.uuid: softwareRevisionCharacteristic,
+                systemIdCharacteristic.uuid: systemIdCharacteristic,
+                ieeeRegulatoryCertificationCharacteristic.uuid: ieeeRegulatoryCertificationCharacteristic,
+                pnpIdCharacteristic.uuid: pnpIdCharacteristic,
             ]
         )
     }
 }
-
-/*
- didDiscoverCharacteristic: <CBCharacteristic: 0x2810308a0, UUID = Serial Number String, properties = 0x2, value = (null), notifying = NO> uuid: 2A25
- didDiscoverCharacteristic: <CBCharacteristic: 0x281030a80, UUID = Hardware Revision String, properties = 0x2, value = (null), notifying = NO> uuid: 2A27
- didDiscoverCharacteristic: <CBCharacteristic: 0x2810309c0, UUID = Firmware Revision String, properties = 0x2, value = (null), notifying = NO> uuid: 2A26
- didDiscoverCharacteristic: <CBCharacteristic: 0x281030ae0, UUID = Software Revision String, properties = 0x2, value = (null), notifying = NO> uuid: 2A28
- didDiscoverCharacteristic: <CBCharacteristic: 0x281030300, UUID = System ID, properties = 0x2, value = (null), notifying = NO> uuid: 2A23
- didDiscoverCharacteristic: <CBCharacteristic: 0x281035080, UUID = IEEE Regulatory Certification, properties = 0x2, value = (null), notifying = NO> uuid: 2A2A
- didDiscoverCharacteristic: <CBCharacteristic: 0x281036400, UUID = PnP ID, properties = 0x2, value = (null), notifying = NO> uuid: 2A50
-
- */

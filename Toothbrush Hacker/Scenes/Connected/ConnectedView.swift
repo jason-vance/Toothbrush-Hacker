@@ -42,7 +42,12 @@ struct ConnectedView: View {
             DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
             DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "--")
             DeviceInfoLabel("Serial Number:", value: model.serialNumber ?? "--")
-            //TODO: Do the rest of these device info things
+            DeviceInfoLabel("Software Revision:", value: model.softwareRevision ?? "--")
+            DeviceInfoLabel("Firmware Revision:", value: model.firmwareRevision ?? "--")
+            DeviceInfoLabel("Hardware Revision:", value: model.hardwareRevision ?? "--")
+            DeviceInfoLabel("System Id:", value: model.systemId ?? "--")
+            DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification ?? "--")
+            DeviceInfoLabel("PnP Id:", value: model.pnpId ?? "--")
         }
         .frame(maxWidth: .infinity)
         .padding()

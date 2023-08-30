@@ -33,7 +33,8 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     
     private func setupBatteryLevelSub() {
         batteryService.batteryLevelPublisher
-            .sink { self.currentBatteryLevel = $0 }
+            .compactMap { $0 }
+            .sink { self.currentBatteryLevel = Double($0) / 100.0 }
             .store(in: &subs)
     }
 }
