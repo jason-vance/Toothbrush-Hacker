@@ -12,7 +12,6 @@ class CharacteristicFormatDescriptor: BleDescriptor {
     
     static let uuid = CBUUID(string: "2904")
     
-    
     //TODO: Use these properties to format the charactertistic's value
     var format: Format = .reservedForFutureUse
     var exponent: Int8 = 0
@@ -33,32 +32,19 @@ class CharacteristicFormatDescriptor: BleDescriptor {
         pullOutProperties(byteArray)
     }
     
-    //TODO: Clean this up somehow, get the print()s into a more centralized place
     private func pullOutProperties(_ byteArray: [UInt8]) {
         if let formatValue = byteArray.getValue(UInt8.self, at: 0) {
-            if let newFormat = Format.init(rawValue: formatValue) {
-                format = newFormat
-            } else {
-                print("Format not recognized: \(String(format:"%02X", formatValue))")
-            }
+            format = Format.from(formatValue) ?? format
         }
         
         exponent = byteArray.getValue(Int8.self, at: 1) ?? exponent
         
         if let unitValue = byteArray.getValue(UInt16.self, at: 2) {
-            if let newUnit = Unit.init(rawValue: unitValue) {
-                unit = newUnit
-            } else {
-                print("Unit not recognized: \(String(format:"%02X", unitValue))")
-            }
+            unit = Unit.from(unitValue) ?? unit
         }
         
         if let namespaceValue = byteArray.getValue(UInt8.self, at: 4) {
-            if let newNamespace = Namespace.init(rawValue: namespaceValue) {
-                namespace = newNamespace
-            } else {
-                print("Namespace not recognized: \(String(format:"%02X", namespaceValue))")
-            }
+            namespace = Namespace.from(namespaceValue)
         }
         
         description = .description(byteArray.getValue(UInt16.self, at: 5) ?? 0x0000)
@@ -67,6 +53,15 @@ class CharacteristicFormatDescriptor: BleDescriptor {
 
 extension CharacteristicFormatDescriptor {
     enum Format: UInt8 {
+        
+        static func from(_ rawValue: UInt8) -> Format? {
+            if let format = Format.init(rawValue: rawValue) {
+                return format
+            }
+            print("Format not recognized: \([UInt8].from(rawValue).toString()))")
+            return nil
+        }
+        
         case reservedForFutureUse = 0x00
 //        <Enumeration key="1" value="Boolean" />
 //        <Enumeration key="2" value="unsigned 2-bit integer" />
@@ -103,6 +98,15 @@ extension CharacteristicFormatDescriptor {
 
 extension CharacteristicFormatDescriptor {
     enum Unit: UInt16 {
+        
+        static func from(_ rawValue: UInt16) -> Unit? {
+            if let unit = Unit.init(rawValue: rawValue) {
+                return unit
+            }
+            print("Unit not recognized: \([UInt8].from(rawValue).toString()))")
+            return nil
+        }
+        
         case unitless = 0x2700
 //        0x2701 length (metre)
 //        0x2702 mass (kilogram)
@@ -234,6 +238,15 @@ extension CharacteristicFormatDescriptor {
 
 extension CharacteristicFormatDescriptor {
     enum Namespace: UInt8 {
+        
+        static func from(_ rawValue: UInt8) -> Namespace {
+            if let format = Namespace.init(rawValue: rawValue) {
+                return format
+            }
+            print("Namespace not recognized: \([UInt8].from(rawValue).toString()))")
+            return .unknown
+        }
+        
         case unknown = 0x00
         case bluetoothSigAssignedNumbers = 0x01
     }

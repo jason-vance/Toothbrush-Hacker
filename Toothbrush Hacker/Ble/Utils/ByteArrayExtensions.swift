@@ -8,6 +8,17 @@
 import Foundation
 
 extension Array<UInt8> {
+    
+    static func from<Value>(_ value: Value) -> [UInt8] where Value: FixedWidthInteger {
+        let length = value.bitWidth / UInt8.bitWidth
+
+        var array: [UInt8] = []
+        for index in 0..<length {
+            array.insert(UInt8.init(truncatingIfNeeded: (value >> (index * UInt8.bitWidth))), at: 0)
+        }
+        return array
+    }
+    
     func getValue<Value>(_ type: Value.Type, at start: Int, isLittleEndian: Bool = true) -> Value? where Value: FixedWidthInteger {
         let length = type.bitWidth / UInt8.bitWidth
         guard self.count >= start + length else {
@@ -23,5 +34,16 @@ extension Array<UInt8> {
             result = result + value
         }
         return result
+    }
+    
+    func toString(separator: String = "") -> String {
+        var s = "0x"
+        for byte in self {
+            if s.last != "x" {
+                s.append(contentsOf: separator)
+            }
+            s.append(contentsOf: String(format:"%02X", byte))
+        }
+        return s
     }
 }
