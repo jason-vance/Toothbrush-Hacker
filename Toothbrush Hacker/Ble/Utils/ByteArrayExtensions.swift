@@ -19,9 +19,13 @@ extension Array<UInt8> {
         return array
     }
     
-    func getValue<Value>(_ type: Value.Type, at start: Int, isLittleEndian: Bool = true) -> Value? where Value: FixedWidthInteger {
-        let length = type.bitWidth / UInt8.bitWidth
-        guard self.count >= start + length else {
+    func getValue<Value>(_ type: Value.Type, at start: Int, lenient: Bool = true) -> Value? where Value: FixedWidthInteger {
+        var length = type.bitWidth / UInt8.bitWidth
+        if lenient {
+            let lengthToEnd = self.count - start
+            length = length > lengthToEnd ? lengthToEnd : length
+        }
+        guard self.count >= start + length else  {
             print("Array<UInt8>.getValue() - range out of bounds. start: \(start), length: \(length)")
             return nil
         }

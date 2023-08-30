@@ -14,6 +14,8 @@ class BleCharacteristic {
     private(set) var descriptors: [CBUUID:BleDescriptor] = [:]
     private(set) var characteristic: CBCharacteristic? = nil
     
+    @Published var valueBytes: [UInt8]? = nil
+    
     init(uuid: CBUUID) {
         self.uuid = uuid
     }
@@ -25,6 +27,7 @@ class BleCharacteristic {
         self.characteristic = cbCharacteristic
         print("BleCharacteristic discovered characteristic: \(cbCharacteristic)")
         communicator.discoverDescriptors(for: self)
+        communicator.readValue(for: self)
     }
     
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
@@ -33,6 +36,14 @@ class BleCharacteristic {
         
         descriptors[descriptor.uuid] = descriptor
         communicator.readValue(for: descriptor)
+    }
+    
+    func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic) {
+        guard let data = cbCharacteristic.value else { return }
+        valueBytes = [UInt8](data)
+        //TODO: Format this value using the format descriptor (maybe just the exponent
+        // self.formattedValue = formattedValue
+        print("BleCharacteristic.receivedValueUpdateFor \(cbCharacteristic) value: \(valueBytes!)")
     }
 }
 

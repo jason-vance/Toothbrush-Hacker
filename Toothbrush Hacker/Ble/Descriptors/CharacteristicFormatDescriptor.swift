@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreBluetooth
+import Combine
 
 class CharacteristicFormatDescriptor: BleDescriptor {
     
@@ -18,18 +19,17 @@ class CharacteristicFormatDescriptor: BleDescriptor {
     var unit: Unit = .unitless
     var namespace: Namespace = .unknown
     var description: Description = .description(0x0000)
+    
+    private var subs: Set<AnyCancellable> = []
 
     override init?(descriptor: CBDescriptor) {
         guard descriptor.uuid == Self.uuid else { return nil }
         super.init(descriptor: descriptor)
-    }
-    
-    override func communicator(_ communicator: BleDeviceCommunicator, didUpdateValueFor cbDescriptor: CBDescriptor) {
-        guard let data = cbDescriptor.value as? Data else { return }
-        let byteArray = [UInt8](data)
-        print("CharacteristicFormatDescriptor.didUpdateValueFor \(cbDescriptor)")
         
-        pullOutProperties(byteArray)
+        $valueBytes
+            .compactMap { $0 }
+            .sink(receiveValue: pullOutProperties(_:))
+            .store(in: &subs)
     }
     
     private func pullOutProperties(_ byteArray: [UInt8]) {
@@ -48,6 +48,8 @@ class CharacteristicFormatDescriptor: BleDescriptor {
         }
         
         description = .description(byteArray.getValue(UInt16.self, at: 5) ?? 0x0000)
+        
+        print("CharacteristicFormatDescriptor.pullOutProperties format:\(format), exponent:\(exponent), unit:\(unit), namespace:\(namespace), description:\(description)")
     }
 }
 

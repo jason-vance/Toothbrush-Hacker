@@ -49,9 +49,10 @@ class BleDeviceCommunicator: NSObject {
         peripheral.readValue(for: descriptor.descriptor)
     }
     
-//    func readValue(for characteristic: CBCharacteristic) {
-//        peripheral.readValue(for: characteristic)
-//    }
+    func readValue(for characteristic: BleCharacteristic) {
+        guard let cbCharacteristic = characteristic.characteristic else { return }
+        peripheral.readValue(for: cbCharacteristic)
+    }
 }
 
 extension BleDeviceCommunicator: CBPeripheralDelegate {
@@ -115,20 +116,22 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         let descriptorUuid = cbDescriptor.uuid
         
         if let descriptor = services[serviceUuid]?.characteristics[characteristicUuid]?.descriptors[descriptorUuid] {
-            descriptor.communicator(self, didUpdateValueFor: cbDescriptor)
+            descriptor.communicator(self, receivedValueUpdateFor: cbDescriptor)
         }
     }
     
-//    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-//        if let error = error {
-//            //TODO: Surface this error
-//            print("Error in didUpdateValueFor characteristics: \(error.localizedDescription)")
-//            return
-//        }
-//
-//        updatedValueCharacteristic = characteristic
-//        guard let characteristicData = characteristic.value else { return }
-//        let byteArray = [UInt8](characteristicData)
-//        print("Received \(characteristicData.count) bytes: \(byteArray)")
-//    }
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor cbCharacteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            //TODO: Surface this error
+            print("Error in didUpdateValueFor characteristics: \(error.localizedDescription)")
+            return
+        }
+        
+        guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
+        let characteristicUuid = cbCharacteristic.uuid
+        
+        if let characteristic = services[serviceUuid]?.characteristics[characteristicUuid] {
+            characteristic.communicator(self, receivedValueUpdateFor: cbCharacteristic)
+        }
+    }
 }

@@ -11,7 +11,7 @@ import Combine
 @MainActor
 class ConnectedViewModel: ObservableObject {
     
-    @Published var currentBatteryLevel: Float = 0
+    @Published var currentBatteryLevel: Double? = nil
     
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
@@ -36,7 +36,7 @@ class ConnectedViewModel: ObservableObject {
     }
     
     private func monitorBatteryLevel() {
-        batteryMonitor.currentBatteryLevelPublisher
+        batteryMonitor.batteryLevelPublisher
             .receive(on: RunLoop.main)
             .sink { self.currentBatteryLevel = $0 }
             .store(in: &subs)

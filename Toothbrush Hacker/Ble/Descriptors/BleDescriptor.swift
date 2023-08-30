@@ -13,6 +13,8 @@ class BleDescriptor {
     var uuid: CBUUID { descriptor.uuid }
     let descriptor: CBDescriptor
     
+    @Published var valueBytes: [UInt8]? = nil
+    
     init?(descriptor: CBDescriptor) {
         self.descriptor = descriptor
     }
@@ -29,10 +31,10 @@ class BleDescriptor {
         return descriptor
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, didUpdateValueFor cbDescriptor: CBDescriptor) {
+    func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
         guard let data = cbDescriptor.value as? Data else { return }
-        let byteArray = [UInt8](data)
-        print("BleDescriptor.didUpdateValueFor \(cbDescriptor) bytes: \(byteArray)")
+        valueBytes = [UInt8](data)
+        print("BleDescriptor.receivedValueUpdateFor \(cbDescriptor) value: \(valueBytes!)")
     }
 }
 

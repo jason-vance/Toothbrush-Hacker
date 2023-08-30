@@ -11,13 +11,13 @@ import CoreBluetooth
 
 protocol DeviceBatteryMonitor {
     
-    var currentBatteryLevelPublisher: Published<Float>.Publisher { get }
+    var batteryLevelPublisher: Published<Double?>.Publisher { get }
 }
 
 class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
     
-    @Published var currentBatteryLevel: Float = 0
-    var currentBatteryLevelPublisher: Published<Float>.Publisher { $currentBatteryLevel }
+    @Published var currentBatteryLevel: Double? = nil
+    var batteryLevelPublisher: Published<Double?>.Publisher { $currentBatteryLevel }
 
     let deviceCommunicator: BleDeviceCommunicator
     let batteryService = BatteryService()
@@ -31,5 +31,13 @@ class BleDeviceBatteryMonitor: DeviceBatteryMonitor {
             services: [batteryService]
         )
         deviceCommunicator = communicator
+        
+        setupBatteryLevelSub()
+    }
+    
+    private func setupBatteryLevelSub() {
+        batteryService.batteryLevelPublisher
+            .sink { self.currentBatteryLevel = $0 }
+            .store(in: &subs)
     }
 }
