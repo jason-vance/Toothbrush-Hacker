@@ -36,14 +36,27 @@ struct ConnectedView: View {
     }
     
     @ViewBuilder func DeviceInformationCard() -> some View {
-        Text("Connected")
-            .font(.title.bold())
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background {
-                CardBackground()
-            }
-            .padding(.horizontal)
+        VStack {
+            Text("Connected")
+                .font(.title.bold())
+            DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            CardBackground()
+        }
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder func DeviceInfoLabel(_ label: String, value: String) -> some View {
+        VStack(spacing: 0) {
+            Text(label)
+                .font(.caption.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(value)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
     }
     
     @ViewBuilder func BatteryLevelCard() -> some View {

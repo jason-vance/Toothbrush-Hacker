@@ -12,7 +12,8 @@ import Combine
 class ConnectedViewModel: ObservableObject {
     
     @Published var currentBatteryLevel: Double? = nil
-    
+    @Published var manufacturerName: String? = nil
+
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
     
@@ -36,12 +37,20 @@ class ConnectedViewModel: ObservableObject {
     
     private func setupSubscribers() {
         monitorBatteryLevel()
+        subscribeToDeviceInfo()
     }
     
     private func monitorBatteryLevel() {
         batteryMonitor.batteryLevelPublisher
             .receive(on: RunLoop.main)
             .sink { self.currentBatteryLevel = $0 }
+            .store(in: &subs)
+    }
+    
+    private func subscribeToDeviceInfo() {
+        deviceInfoReader.manufacturerNamePublisher
+            .receive(on: RunLoop.main)
+            .sink { self.manufacturerName = $0 }
             .store(in: &subs)
     }
     

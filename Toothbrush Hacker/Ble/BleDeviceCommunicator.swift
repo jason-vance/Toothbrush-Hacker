@@ -120,6 +120,10 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             for cbDescriptor in cbCharacteristic.descriptors ?? [] {
                 characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
             }
+        } else {
+            for d in cbCharacteristic.descriptors ?? [] {
+                print("didDiscoverDescriptor: \(d) forCharacteristic: \(cbCharacteristic.uuid)")
+            }
         }
     }
     

@@ -21,7 +21,6 @@ class BleService {
     
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbService: CBService) {
         guard self.service == nil else {
-            print("My service was already discovered: \(cbService)")
             return
         }
         self.service = cbService

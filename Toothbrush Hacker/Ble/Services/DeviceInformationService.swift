@@ -11,11 +11,16 @@ import CoreBluetooth
 class DeviceInformationService: BleService {
     
     static let uuid = CBUUID(string: "180A")
+    
+    var manufacturerNamePublisher: Published<String?>.Publisher { manufacturerNameCharacteristic.$manufacturerName }
+    
+    private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
 
     init() {
+        manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
         super.init(
             uuid: Self.uuid,
-            characteristics: [:]
+            characteristics: [manufacturerNameCharacteristic.uuid: manufacturerNameCharacteristic]
         )
     }
 }

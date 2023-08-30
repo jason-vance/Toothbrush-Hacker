@@ -34,6 +34,7 @@
 		564E09932A9EB98100AE3482 /* ByteArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09922A9EB98100AE3482 /* ByteArrayExtensions.swift */; };
 		564E09952A9F2F9100AE3482 /* DeviceInformationReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09942A9F2F9100AE3482 /* DeviceInformationReader.swift */; };
 		564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */; };
+		564E09992A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,7 @@
 		564E09922A9EB98100AE3482 /* ByteArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteArrayExtensions.swift; sourceTree = "<group>"; };
 		564E09942A9F2F9100AE3482 /* DeviceInformationReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformationReader.swift; sourceTree = "<group>"; };
 		564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformationService.swift; sourceTree = "<group>"; };
+		564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturerNameCharacteristic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +188,7 @@
 			children = (
 				564E09892A9E87D200AE3482 /* BleCharacteristic.swift */,
 				564E096F2A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift */,
+				564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */,
 			);
 			path = Characteristics;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 				564E09682A9C4F8700AE3482 /* ConnectedViewModel.swift in Sources */,
 				564E09862A9DF1C500AE3482 /* ConnectionEvent.swift in Sources */,
 				564E09662A9C4C0F00AE3482 /* AppModel.swift in Sources */,
+				564E09992A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift in Sources */,
 				564E09702A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift in Sources */,
 				564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */,
 				564E09952A9F2F9100AE3482 /* DeviceInformationReader.swift in Sources */,
