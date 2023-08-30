@@ -12,7 +12,6 @@
 		564E09472A9B3C0B00AE3482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09462A9B3C0B00AE3482 /* Assets.xcassets */; };
 		564E094A2A9B3C0B00AE3482 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09492A9B3C0B00AE3482 /* Preview Assets.xcassets */; };
 		564E09552A9B3CAA00AE3482 /* ScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09542A9B3CAA00AE3482 /* ScannerViewModel.swift */; };
-		564E095A2A9B48EC00AE3482 /* BleDeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09592A9B48EC00AE3482 /* BleDeviceManager.swift */; };
 		564E095D2A9C43AE00AE3482 /* DeviceScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E095C2A9C43AE00AE3482 /* DeviceScanner.swift */; };
 		564E09642A9C4BA400AE3482 /* ConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09632A9C4BA400AE3482 /* ConnectedView.swift */; };
 		564E09662A9C4C0F00AE3482 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09652A9C4C0F00AE3482 /* AppModel.swift */; };
@@ -44,7 +43,6 @@
 		564E09462A9B3C0B00AE3482 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		564E09492A9B3C0B00AE3482 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		564E09542A9B3CAA00AE3482 /* ScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewModel.swift; sourceTree = "<group>"; };
-		564E09592A9B48EC00AE3482 /* BleDeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleDeviceManager.swift; sourceTree = "<group>"; };
 		564E095C2A9C43AE00AE3482 /* DeviceScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceScanner.swift; sourceTree = "<group>"; };
 		564E09632A9C4BA400AE3482 /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
 		564E09652A9C4C0F00AE3482 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -144,7 +142,6 @@
 				564E09852A9DF1C500AE3482 /* ConnectionEvent.swift */,
 				564E097F2A9DC2FE00AE3482 /* DiscoveredPeripheral.swift */,
 				564E09832A9DE59100AE3482 /* BleCentralManager.swift */,
-				564E09592A9B48EC00AE3482 /* BleDeviceManager.swift */,
 				564E09762A9D6E3F00AE3482 /* BleDeviceConnection.swift */,
 				564E097D2A9D775400AE3482 /* BleDeviceCommunicator.swift */,
 				564E096B2A9C883800AE3482 /* Services */,
@@ -294,7 +291,6 @@
 				564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */,
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
 				564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */,
-				564E095A2A9B48EC00AE3482 /* BleDeviceManager.swift in Sources */,
 				564E097C2A9D755100AE3482 /* StringAsError.swift in Sources */,
 				564E097E2A9D775400AE3482 /* BleDeviceCommunicator.swift in Sources */,
 				564E09682A9C4F8700AE3482 /* ConnectedViewModel.swift in Sources */,

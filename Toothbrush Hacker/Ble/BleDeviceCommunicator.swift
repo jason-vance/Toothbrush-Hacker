@@ -63,6 +63,11 @@ class BleDeviceCommunicator: NSObject {
         guard let cbCharacteristic = characteristic.characteristic else { return }
         peripheral.readValue(for: cbCharacteristic)
     }
+    
+    func startNotifications(for characteristic: BleCharacteristic) {
+        guard let cbCharacteristic = characteristic.characteristic else { return }
+        peripheral.setNotifyValue(true, for: cbCharacteristic)
+    }
 }
 
 extension BleDeviceCommunicator: CBPeripheralDelegate {
@@ -77,6 +82,8 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         for cbService in peripheral.services ?? [] {
             if let service = services[cbService.uuid] {
                 service.communicator(self, discovered: cbService)
+            } else {
+                print("didDiscoverService: \(cbService) uuid: \(cbService.uuid.uuidString)")
             }
         }
     }

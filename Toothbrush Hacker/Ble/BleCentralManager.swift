@@ -147,7 +147,6 @@ extension BleCentralManager: CBCentralManagerDelegate {
     {
         guard RSSI.intValue >= -50 else { return }
 
-        print("Discovered \(String(describing: peripheral.name)) at \(RSSI.intValue)")
         discoveredPeripheral = DiscoveredPeripheral(
             peripheral: peripheral,
             advertisementData: advertisementData,

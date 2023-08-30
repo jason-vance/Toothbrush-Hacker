@@ -18,7 +18,7 @@ class BatteryLevelCharacteristic: BleCharacteristic {
     private var subs: Set<AnyCancellable> = []
     
     init() {
-        super.init(uuid: Self.uuid)
+        super.init(uuid: Self.uuid, readValueOnDiscover: true)
         
         $valueBytes
             .compactMap { $0 }
@@ -29,7 +29,6 @@ class BatteryLevelCharacteristic: BleCharacteristic {
     private func batteryLevelReceived(_ batteryLevelBytes: [UInt8]) {
         if let batteryLevelInt = batteryLevelBytes.getValue(UInt8.self, at: 0) {
             batteryLevel = Double(batteryLevelInt) / 100.0
-            print("BatteryLevelCharacteristic.batteyLevelReceived batteryLevel: \(batteryLevel!)")
         }
     }
 }

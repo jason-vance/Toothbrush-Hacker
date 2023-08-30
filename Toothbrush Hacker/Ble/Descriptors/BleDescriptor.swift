@@ -34,7 +34,6 @@ class BleDescriptor {
     func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
         guard let data = cbDescriptor.value as? Data else { return }
         valueBytes = [UInt8](data)
-        print("BleDescriptor.receivedValueUpdateFor \(cbDescriptor) value: \(valueBytes!)")
     }
 }
 

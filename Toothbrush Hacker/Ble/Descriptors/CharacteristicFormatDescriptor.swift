@@ -48,8 +48,6 @@ class CharacteristicFormatDescriptor: BleDescriptor {
         }
         
         description = .description(byteArray.getValue(UInt16.self, at: 5) ?? 0x0000)
-        
-        print("CharacteristicFormatDescriptor.pullOutProperties format:\(format), exponent:\(exponent), unit:\(unit), namespace:\(namespace), description:\(description)")
     }
 }
 

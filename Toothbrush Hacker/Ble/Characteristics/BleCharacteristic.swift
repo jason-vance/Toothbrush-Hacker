@@ -13,27 +13,34 @@ class BleCharacteristic {
     let uuid: CBUUID
     private(set) var descriptors: [CBUUID:BleDescriptor] = [:]
     private(set) var characteristic: CBCharacteristic? = nil
+    let readValueOnDiscover: Bool
+    let setToNotify: Bool
     
     @Published var valueBytes: [UInt8]? = nil
     
-    init(uuid: CBUUID) {
+    init(uuid: CBUUID, readValueOnDiscover: Bool = false, setToNotify: Bool = false) {
         self.uuid = uuid
+        self.readValueOnDiscover = readValueOnDiscover
+        self.setToNotify = setToNotify
     }
     
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbCharacteristic: CBCharacteristic) {
         guard self.characteristic == nil else {
-            print("My characteristic was already discoverd")
+            print("My characteristic was already discovered: \(cbCharacteristic)")
             return
         }
         self.characteristic = cbCharacteristic
-        print("BleCharacteristic discovered characteristic: \(cbCharacteristic)")
         communicator.discoverDescriptors(for: self)
-        communicator.readValue(for: self)
+        if readValueOnDiscover {
+            communicator.readValue(for: self)
+        }
+        if setToNotify {
+            communicator.startNotifications(for: self)
+        }
     }
     
     func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
         guard let descriptor = BleDescriptor.create(with: cbDescriptor) else { return }
-        print("BleCharacteristic discovered descriptor: \(cbDescriptor)")
         
         descriptors[descriptor.uuid] = descriptor
         communicator.readValue(for: descriptor)
@@ -44,7 +51,6 @@ class BleCharacteristic {
         valueBytes = [UInt8](data)
         //TODO: Format this value using the format descriptor (maybe just the exponent
         // self.formattedValue = formattedValue
-        print("BleCharacteristic.receivedValueUpdateFor \(cbCharacteristic) value: \(valueBytes!)")
     }
 }
 
