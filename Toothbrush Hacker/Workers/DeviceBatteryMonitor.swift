@@ -10,7 +10,6 @@ import Combine
 import CoreBluetooth
 
 protocol DeviceBatteryMonitor {
-    
     var batteryLevelPublisher: Published<Double?>.Publisher { get }
 }
 

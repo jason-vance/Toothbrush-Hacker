@@ -36,10 +36,11 @@ struct ConnectedView: View {
     }
     
     @ViewBuilder func DeviceInformationCard() -> some View {
-        VStack {
+        VStack(spacing: 16) {
             Text("Connected")
                 .font(.title.bold())
             DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
+            DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "--")
         }
         .frame(maxWidth: .infinity)
         .padding()

@@ -11,12 +11,13 @@ import CoreBluetooth
 
 protocol DeviceInformationReader {
     var manufacturerNamePublisher: Published<String?>.Publisher { get }
+    var modelNumberPublisher: Published<String?>.Publisher { get }
 }
 
 class BleDeviceInformationReader: DeviceInformationReader {
     
-    @Published var manufacturerName: String? = nil
-    var manufacturerNamePublisher: Published<String?>.Publisher { $manufacturerName }
+    var manufacturerNamePublisher: Published<String?>.Publisher { deviceInfoService.manufacturerNamePublisher }
+    var modelNumberPublisher: Published<String?>.Publisher { deviceInfoService.modelNumberPublisher }
     
     let deviceCommunicator: BleDeviceCommunicator
     let deviceInfoService = DeviceInformationService()
@@ -27,13 +28,5 @@ class BleDeviceInformationReader: DeviceInformationReader {
         let communicator = BleDeviceCommunicator.getOrCreate(from: device)
         communicator.add(services: [deviceInfoService])
         deviceCommunicator = communicator
-        
-        setupManufacturerNameSub()
-    }
-    
-    private func setupManufacturerNameSub() {
-        deviceInfoService.manufacturerNamePublisher
-            .sink { self.manufacturerName = $0 }
-            .store(in: &subs)
     }
 }

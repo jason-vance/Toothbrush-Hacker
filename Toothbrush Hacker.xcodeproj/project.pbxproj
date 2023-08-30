@@ -35,6 +35,7 @@
 		564E09952A9F2F9100AE3482 /* DeviceInformationReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09942A9F2F9100AE3482 /* DeviceInformationReader.swift */; };
 		564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */; };
 		564E09992A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */; };
+		564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		564E09942A9F2F9100AE3482 /* DeviceInformationReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformationReader.swift; sourceTree = "<group>"; };
 		564E09962A9F2FF400AE3482 /* DeviceInformationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformationService.swift; sourceTree = "<group>"; };
 		564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturerNameCharacteristic.swift; sourceTree = "<group>"; };
+		564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelNumberCharacteristic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 				564E09892A9E87D200AE3482 /* BleCharacteristic.swift */,
 				564E096F2A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift */,
 				564E09982A9F37CA00AE3482 /* ManufacturerNameCharacteristic.swift */,
+				564E099A2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift */,
 			);
 			path = Characteristics;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */,
 				564E09772A9D6E3F00AE3482 /* BleDeviceConnection.swift in Sources */,
 				564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */,
+				564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */,
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
 				564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */,
 				564E097C2A9D755100AE3482 /* StringAsError.swift in Sources */,
