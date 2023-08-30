@@ -18,9 +18,9 @@ class ConnectedViewModel: ObservableObject {
     @Published var hardwareRevision: String? = nil
     @Published var firmwareRevision: String? = nil
     @Published var softwareRevision: String? = nil
-    @Published var systemId: String? = nil
-    @Published var ieeeCertification: String? = nil
-    @Published var pnpId: String? = nil
+    @Published var systemId: Int? = nil
+    @Published var ieeeCertification: Int? = nil
+    @Published var pnpId: Int? = nil
 
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""

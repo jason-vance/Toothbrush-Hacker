@@ -45,9 +45,9 @@ struct ConnectedView: View {
             DeviceInfoLabel("Software Revision:", value: model.softwareRevision ?? "--")
             DeviceInfoLabel("Firmware Revision:", value: model.firmwareRevision ?? "--")
             DeviceInfoLabel("Hardware Revision:", value: model.hardwareRevision ?? "--")
-            DeviceInfoLabel("System Id:", value: model.systemId ?? "--")
-            DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification ?? "--")
-            DeviceInfoLabel("PnP Id:", value: model.pnpId ?? "--")
+            DeviceInfoLabel("System Id:", value: model.systemId != nil ? "\(model.systemId!)" : "--")
+            DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification != nil ? "\(model.ieeeCertification!)" : "--")
+            DeviceInfoLabel("PnP Id:", value: model.pnpId != nil ? "\(model.pnpId!)" : "--")
         }
         .frame(maxWidth: .infinity)
         .padding()

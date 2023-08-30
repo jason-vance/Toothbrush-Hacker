@@ -18,9 +18,9 @@ class DeviceInformationService: BleService {
     var hardwareRevisionPublisher: Published<String?>.Publisher { hardwareRevisionCharacteristic.$value }
     var firmwareRevisionPublisher: Published<String?>.Publisher { firmwareRevisionCharacteristic.$value }
     var softwareRevisionPublisher: Published<String?>.Publisher { softwareRevisionCharacteristic.$value }
-    var systemIdPublisher: Published<String?>.Publisher { systemIdCharacteristic.$value }
-    var ieeeRegulatoryCertificationPublisher: Published<String?>.Publisher { ieeeRegulatoryCertificationCharacteristic.$value }
-    var pnpIdPublisher: Published<String?>.Publisher { pnpIdCharacteristic.$value }
+    var systemIdPublisher: Published<Int?>.Publisher { systemIdCharacteristic.$value }
+    var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { ieeeRegulatoryCertificationCharacteristic.$value }
+    var pnpIdPublisher: Published<Int?>.Publisher { pnpIdCharacteristic.$value }
 
     private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
     private let modelNumberCharacteristic: ModelNumberCharacteristic

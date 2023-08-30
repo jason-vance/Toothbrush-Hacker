@@ -16,9 +16,9 @@ protocol DeviceInformationReader {
     var hardwareRevisionPublisher: Published<String?>.Publisher { get }
     var firmwareRevisionPublisher: Published<String?>.Publisher { get }
     var softwareRevisionPublisher: Published<String?>.Publisher { get }
-    var systemIdPublisher: Published<String?>.Publisher { get }
-    var ieeeRegulatoryCertificationPublisher: Published<String?>.Publisher { get }
-    var pnpIdPublisher: Published<String?>.Publisher { get }
+    var systemIdPublisher: Published<Int?>.Publisher { get }
+    var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { get }
+    var pnpIdPublisher: Published<Int?>.Publisher { get }
 }
 
 class BleDeviceInformationReader: DeviceInformationReader {
@@ -29,9 +29,9 @@ class BleDeviceInformationReader: DeviceInformationReader {
     var hardwareRevisionPublisher: Published<String?>.Publisher { deviceInfoService.hardwareRevisionPublisher }
     var firmwareRevisionPublisher: Published<String?>.Publisher { deviceInfoService.firmwareRevisionPublisher }
     var softwareRevisionPublisher: Published<String?>.Publisher { deviceInfoService.softwareRevisionPublisher }
-    var systemIdPublisher: Published<String?>.Publisher { deviceInfoService.systemIdPublisher }
-    var ieeeRegulatoryCertificationPublisher: Published<String?>.Publisher { deviceInfoService.ieeeRegulatoryCertificationPublisher }
-    var pnpIdPublisher: Published<String?>.Publisher { deviceInfoService.pnpIdPublisher }
+    var systemIdPublisher: Published<Int?>.Publisher { deviceInfoService.systemIdPublisher }
+    var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { deviceInfoService.ieeeRegulatoryCertificationPublisher }
+    var pnpIdPublisher: Published<Int?>.Publisher { deviceInfoService.pnpIdPublisher }
 
     let deviceCommunicator: BleDeviceCommunicator
     let deviceInfoService = DeviceInformationService()

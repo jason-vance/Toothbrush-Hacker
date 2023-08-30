@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-class IeeeRegulatoryCertificationCharacteristic: BleCharacteristic<String> {
+class IeeeRegulatoryCertificationCharacteristic: BleCharacteristic<Int> {
     
     static let uuid = CBUUID(string: "2A2A")
     

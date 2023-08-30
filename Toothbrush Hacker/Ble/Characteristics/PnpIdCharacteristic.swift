@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-class PnpIdCharacteristic: BleCharacteristic<String> {
+class PnpIdCharacteristic: BleCharacteristic<Int> {
     
     static let uuid = CBUUID(string: "2A50")
     

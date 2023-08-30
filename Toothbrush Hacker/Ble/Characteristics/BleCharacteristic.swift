@@ -26,8 +26,9 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     let readValueOnDiscover: Bool
     let setToNotify: Bool
     
+    @Published var valueBytes: [UInt8]? = nil
     @Published var value: ValueType? = nil
-    
+
     init(uuid: CBUUID, readValueOnDiscover: Bool = false, setToNotify: Bool = false) {
         self.uuid = uuid
         self.readValueOnDiscover = readValueOnDiscover
@@ -57,7 +58,10 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     final func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic) {
         guard let data = cbCharacteristic.value else { return }
-        if let value = format(valueBytes: [UInt8](data)) {
+        let valueBytes = [UInt8](data)
+        
+        self.valueBytes = valueBytes
+        if let value = format(valueBytes: valueBytes) {
             self.value = value
         } else {
             print("Could not format CBCharacteristic.value as \(String(describing: ValueType.self))")
@@ -66,6 +70,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     //TODO: Format this value using the format descriptor (maybe just the exponent)
     open func format(valueBytes: [UInt8]) -> ValueType? {
+        print("Attempting to format \(valueBytes.toString()) for \(characteristic!)")
         if ValueType.self == Bool.self {
             if let value = valueBytes.getValue(UInt8.self, at: 0) {
                 return (value != 0) as? ValueType
@@ -79,7 +84,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         }
         
         if ValueType.self == String.self {
-            //TODO: Extend this to handle utf16 strings
+            //TODO: Extend this to handle utf16 strings (look at the format descriptor's format)
             if let value = String(bytes: valueBytes, encoding: .utf8) {
                 return value as? ValueType
             }
