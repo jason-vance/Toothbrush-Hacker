@@ -22,27 +22,17 @@ class DeviceInformationService: BleService {
     var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { ieeeRegulatoryCertificationCharacteristic.$value }
     var pnpIdPublisher: Published<Int?>.Publisher { pnpIdCharacteristic.$value }
 
-    private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
-    private let modelNumberCharacteristic: ModelNumberCharacteristic
-    private let serialNumberCharacteristic: SerialNumberCharacteristic
-    private let hardwareRevisionCharacteristic: HardwareRevisionCharacteristic
-    private let firmwareRevisionCharacteristic: FirmwareRevisionCharacteristic
-    private let softwareRevisionCharacteristic: SoftwareRevisionCharacteristic
-    private let systemIdCharacteristic: SystemIdCharacteristic
-    private let ieeeRegulatoryCertificationCharacteristic: IeeeRegulatoryCertificationCharacteristic
-    private let pnpIdCharacteristic: PnpIdCharacteristic
+    private let manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
+    private let modelNumberCharacteristic = ModelNumberCharacteristic()
+    private let serialNumberCharacteristic = SerialNumberCharacteristic()
+    private let hardwareRevisionCharacteristic = HardwareRevisionCharacteristic()
+    private let firmwareRevisionCharacteristic = FirmwareRevisionCharacteristic()
+    private let softwareRevisionCharacteristic = SoftwareRevisionCharacteristic()
+    private let systemIdCharacteristic = SystemIdCharacteristic()
+    private let ieeeRegulatoryCertificationCharacteristic = IeeeRegulatoryCertificationCharacteristic()
+    private let pnpIdCharacteristic = PnpIdCharacteristic()
 
     init() {
-        manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
-        modelNumberCharacteristic = ModelNumberCharacteristic()
-        serialNumberCharacteristic = SerialNumberCharacteristic()
-        hardwareRevisionCharacteristic = HardwareRevisionCharacteristic()
-        firmwareRevisionCharacteristic = FirmwareRevisionCharacteristic()
-        softwareRevisionCharacteristic = SoftwareRevisionCharacteristic()
-        systemIdCharacteristic = SystemIdCharacteristic()
-        ieeeRegulatoryCertificationCharacteristic = IeeeRegulatoryCertificationCharacteristic()
-        pnpIdCharacteristic = PnpIdCharacteristic()
-
         super.init(
             uuid: Self.uuid,
             bleCharacteristics: [

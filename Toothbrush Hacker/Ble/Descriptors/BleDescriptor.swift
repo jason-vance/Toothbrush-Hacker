@@ -22,13 +22,16 @@ class BleDescriptor {
     }
     
     static func create(with cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) -> BleDescriptor? {
-        let bleDescriptor =
+        var bleDescriptor =
             CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
             ClientCharacteristicConfigurationDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
             nil
             
         if bleDescriptor == nil {
-            print("Couldn't create BleDescriptor with \(cbDescriptor)")
+            bleDescriptor = bleCharacteristic.createDescriptor(with: cbDescriptor)
+        }
+        if bleDescriptor == nil {
+            print("Couldn't create BleDescriptor with \(cbDescriptor) for \(bleCharacteristic.uuid)")
         }
         return bleDescriptor
     }
@@ -36,6 +39,7 @@ class BleDescriptor {
     func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
         guard let data = cbDescriptor.value as? Data else { return }
         valueBytes = [UInt8](data)
+        printValueBytes()
     }
 }
 
@@ -50,5 +54,12 @@ extension BleDescriptor: Hashable {
     
     func hash(into hasher: inout Hasher) {
         uuid.hash(into: &hasher)
+    }
+}
+
+extension BleDescriptor {
+    func printValueBytes() {
+        guard let valueBytes = valueBytes else { return }
+        print("BleDescriptor(\(uuid)).valueBytes: \(valueBytes.toString())")
     }
 }

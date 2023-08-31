@@ -14,6 +14,7 @@ class BleService {
     let bleCharacteristics: [CBUUID:BleCharacteristicProtocol]
     private(set) var cbService: CBService? = nil
     
+    //TODO: Just take an array of bleCharacteristics, init() can handle turning that into a dict
     init(uuid: CBUUID, bleCharacteristics: [CBUUID:BleCharacteristicProtocol]) {
         self.uuid = uuid
         self.bleCharacteristics = bleCharacteristics

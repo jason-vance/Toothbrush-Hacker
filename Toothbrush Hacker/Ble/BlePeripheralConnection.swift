@@ -61,6 +61,7 @@ class BlePeripheralConnection {
         }
     }
     
+    //TODO: Fix bug where connectionContinuation is resume()ed again if you disconnect then reconnect a ble device
     private func onNew(connectionEvent: ConnectionEvent) {
         switch connectionEvent {
         case .didConnect(_):

@@ -14,11 +14,9 @@ class BatteryService: BleService {
 
     var batteryLevelPublisher: Published<Int?>.Publisher { batteryLevelCharacteristic.$value }
     
-    private let batteryLevelCharacteristic: BatteryLevelCharacteristic
+    private let batteryLevelCharacteristic = BatteryLevelCharacteristic()
     
     init() {
-        batteryLevelCharacteristic = BatteryLevelCharacteristic()
-        
         super.init(
             uuid: Self.uuid,
             bleCharacteristics: [batteryLevelCharacteristic.uuid: batteryLevelCharacteristic]

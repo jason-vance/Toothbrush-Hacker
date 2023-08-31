@@ -23,6 +23,8 @@ protocol BleCharacteristicProtocol : AnyObject {
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
     func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
+    
+    func createDescriptor(with cbDescriptor: CBDescriptor) -> BleDescriptor?
 }
 
 class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
@@ -74,10 +76,12 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         let valueBytes = [UInt8](data)
         
         self.valueBytes = valueBytes
+        printValueBytes()
         if let value = format(valueBytes: valueBytes) {
             self.value = value
+            printValue()
         } else {
-            print("Could not format CBCharacteristic.value as \(String(describing: ValueType.self))")
+            print("Could not format characteristic(\(cbCharacteristic.uuid)) value as \(String(describing: ValueType.self))")
         }
     }
     
@@ -96,8 +100,11 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         }
         
         if ValueType.self == String.self {
-            //TODO: Extend this to handle utf16 strings (look at the format descriptor's format)
+            //TODO: Extend this to properly handle utf16 strings (prob should look at the format descriptor)
             if let value = String(bytes: valueBytes, encoding: .utf8) {
+                return value as? ValueType
+            }
+            if let value = String(bytes: valueBytes, encoding: .utf16) {
                 return value as? ValueType
             }
         }
@@ -105,6 +112,8 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         print("Override `format(valueBytes: [UInt8])` to handle type: \(String(describing: ValueType.self))")
         return nil
     }
+    
+    open func createDescriptor(with: CBDescriptor) -> BleDescriptor? { nil }
     
     var canBroadcast: Bool {
         guard let properties = properties else { return false }
@@ -202,5 +211,15 @@ fileprivate extension BleCharacteristic {
             return String(s.dropLast(2))
         }()
         print("\(uuid): \(propString)")
+    }
+    
+    func printValueBytes() {
+        guard let valueBytes = valueBytes else { return }
+        print("\(uuid).valueBytes: \(valueBytes.toString())")
+    }
+    
+    func printValue() {
+        guard let value = value else { return }
+        print("\(uuid).value: \(value)")
     }
 }
