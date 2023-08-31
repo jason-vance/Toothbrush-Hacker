@@ -13,6 +13,8 @@
 		5607C70F2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C70E2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift */; };
 		5607C7112A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7102A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift */; };
 		5607C7132A9FFA6200E90A3B /* PnpIdCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */; };
+		5607C7172AA06B5D00E90A3B /* UnknownToothbrushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */; };
+		5607C7192AA06C1000E90A3B /* ToothbrushPropertyReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */; };
 		564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */; };
 		564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09442A9B3C0900AE3482 /* ScannerView.swift */; };
 		564E09472A9B3C0B00AE3482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09462A9B3C0B00AE3482 /* Assets.xcassets */; };
@@ -52,6 +54,8 @@
 		5607C70E2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemIdCharacteristic.swift; sourceTree = "<group>"; };
 		5607C7102A9FFA4C00E90A3B /* IeeeRegulatoryCertificationCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IeeeRegulatoryCertificationCharacteristic.swift; sourceTree = "<group>"; };
 		5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnpIdCharacteristic.swift; sourceTree = "<group>"; };
+		5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownToothbrushService.swift; sourceTree = "<group>"; };
+		5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToothbrushPropertyReader.swift; sourceTree = "<group>"; };
 		564E093F2A9B3C0900AE3482 /* Toothbrush Hacker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Toothbrush Hacker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toothbrush_HackerApp.swift; sourceTree = "<group>"; };
 		564E09442A9B3C0900AE3482 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -96,6 +100,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5607C71A2AA06D8500E90A3B /* ToothbrushBle */ = {
+			isa = PBXGroup;
+			children = (
+				5607C71B2AA06DB100E90A3B /* Services */,
+				5607C71C2AA06DBD00E90A3B /* Characteristics */,
+			);
+			path = ToothbrushBle;
+			sourceTree = "<group>";
+		};
+		5607C71B2AA06DB100E90A3B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		5607C71C2AA06DBD00E90A3B /* Characteristics */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Characteristics;
+			sourceTree = "<group>";
+		};
 		564E09362A9B3C0900AE3482 = {
 			isa = PBXGroup;
 			children = (
@@ -117,6 +145,8 @@
 			children = (
 				564E097A2A9D754700AE3482 /* Extensions */,
 				564E09582A9B487A00AE3482 /* Ble */,
+				5607C71A2AA06D8500E90A3B /* ToothbrushBle */,
+				564E09912A9EB96200AE3482 /* Utils */,
 				564E095B2A9C438100AE3482 /* Workers */,
 				564E09522A9B3C9700AE3482 /* Scenes */,
 				564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */,
@@ -165,7 +195,6 @@
 				564E096B2A9C883800AE3482 /* Services */,
 				564E096E2A9C8A5300AE3482 /* Characteristics */,
 				564E09712A9C8ABB00AE3482 /* Descriptors */,
-				564E09912A9EB96200AE3482 /* Utils */,
 			);
 			path = Ble;
 			sourceTree = "<group>";
@@ -176,6 +205,7 @@
 				564E095C2A9C43AE00AE3482 /* DeviceScanner.swift */,
 				564E09692A9C870300AE3482 /* DeviceBatteryMonitor.swift */,
 				564E09942A9F2F9100AE3482 /* DeviceInformationReader.swift */,
+				5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */,
 			);
 			path = Workers;
 			sourceTree = "<group>";
@@ -316,6 +346,7 @@
 				564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */,
 				564E09772A9D6E3F00AE3482 /* BleDeviceConnection.swift in Sources */,
 				5607C7092A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift in Sources */,
+				5607C7192AA06C1000E90A3B /* ToothbrushPropertyReader.swift in Sources */,
 				564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */,
 				564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */,
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
@@ -347,6 +378,7 @@
 				564E096D2A9C884200AE3482 /* BatteryService.swift in Sources */,
 				5607C70B2A9FFA0B00E90A3B /* FirmwareRevisionCharacteristic.swift in Sources */,
 				564E09932A9EB98100AE3482 /* ByteArrayExtensions.swift in Sources */,
+				5607C7172AA06B5D00E90A3B /* UnknownToothbrushService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

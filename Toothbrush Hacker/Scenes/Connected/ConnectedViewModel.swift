@@ -28,17 +28,20 @@ class ConnectedViewModel: ObservableObject {
     let toothbrushConnection: BleDeviceConnection
     let batteryMonitor: DeviceBatteryMonitor
     let deviceInfoReader: DeviceInformationReader
+    let toothbrushPropertyReader: ToothbrushPropertyReader
 
     var subs: Set<AnyCancellable> = []
 
     init(
         toothbrushConnection: BleDeviceConnection,
         batteryMonitor: DeviceBatteryMonitor,
-        deviceInfoReader: DeviceInformationReader
+        deviceInfoReader: DeviceInformationReader,
+        toothbrushPropertyReader: ToothbrushPropertyReader
     ) {
         self.toothbrushConnection = toothbrushConnection
         self.batteryMonitor = batteryMonitor
         self.deviceInfoReader = deviceInfoReader
+        self.toothbrushPropertyReader = toothbrushPropertyReader
 
         setupSubscribers()
     }

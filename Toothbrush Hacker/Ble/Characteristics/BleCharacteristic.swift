@@ -18,6 +18,7 @@ protocol BleCharacteristicProtocol {
     func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
 }
 
+//TODO: Check a characteristics properties (readable, writable, etc)
 class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     let uuid: CBUUID

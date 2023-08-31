@@ -16,6 +16,9 @@ struct ConnectedView: View {
         ),
         deviceInfoReader: BleDeviceInformationReader(
             device: AppModel.instance.toothbrushConnection!.peripheral
+        ),
+        toothbrushPropertyReader: ToothbrushPropertyReader(
+            device: AppModel.instance.toothbrushConnection!.peripheral
         )
     )
     
