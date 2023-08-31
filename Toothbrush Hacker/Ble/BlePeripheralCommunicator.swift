@@ -60,11 +60,19 @@ class BlePeripheralCommunicator: NSObject {
     }
     
     func readValue(for bleCharacteristic: BleCharacteristicProtocol) {
+        guard bleCharacteristic.canRead else {
+            print("Attempted to readValue(for: \(bleCharacteristic.uuid)), but it's properties do not include .read")
+            return
+        }
         guard let cbCharacteristic = bleCharacteristic.cbCharacteristic else { return }
         peripheral.readValue(for: cbCharacteristic)
     }
     
     func startNotifications(for bleCharacteristic: BleCharacteristicProtocol) {
+        guard bleCharacteristic.canNotify else {
+            print("Attempted to setNotifyValue(true, for: \(bleCharacteristic.uuid)), but it's properties do not include .notify")
+            return
+        }
         guard let cbCharacteristic = bleCharacteristic.cbCharacteristic else { return }
         peripheral.setNotifyValue(true, for: cbCharacteristic)
     }

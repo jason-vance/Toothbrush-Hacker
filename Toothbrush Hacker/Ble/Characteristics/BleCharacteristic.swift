@@ -16,13 +16,15 @@ protocol BleCharacteristicProtocol : AnyObject {
     
     var properties: CBCharacteristicProperties? { get }
     var valueBytes: [UInt8]? { get }
+    
+    var canRead: Bool { get }
+    var canNotify: Bool { get }
 
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
     func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
 }
 
-//TODO: Check a characteristics properties (readable, writable, etc)
 class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     let uuid: CBUUID

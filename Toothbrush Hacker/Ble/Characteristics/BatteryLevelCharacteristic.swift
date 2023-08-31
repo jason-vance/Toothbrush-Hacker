@@ -13,6 +13,6 @@ class BatteryLevelCharacteristic: BleCharacteristic<Int> {
     static let uuid = CBUUID(string: "2A19")
     
     init() {
-        super.init(uuid: Self.uuid, readValueOnDiscover: true)
+        super.init(uuid: Self.uuid, readValueOnDiscover: true, setToNotify: true)
     }
 }
