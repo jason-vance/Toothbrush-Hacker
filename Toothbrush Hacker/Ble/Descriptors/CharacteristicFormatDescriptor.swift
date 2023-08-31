@@ -48,10 +48,19 @@ class CharacteristicFormatDescriptor: BleDescriptor {
         }
         
         description = .description(byteArray.getValue(UInt16.self, at: 5) ?? 0x0000)
-//        print("CharacteristicFormatDescriptor.pullOutProperties format:\(format), exponent:\(exponent), unit:\(unit), namespace:\(namespace), description:\(description)")
+        
+        printProperties()
     }
 }
 
+//MARK: Debug helpers
+fileprivate extension CharacteristicFormatDescriptor {
+    func printProperties() {
+        print("\(bleCharacteristic.uuid).value format: \(format), exponent: \(exponent), unit: \(unit), namespace: \(namespace), description: \(description)")
+    }
+}
+
+//MARK: Format enum
 extension CharacteristicFormatDescriptor {
     enum Format: UInt8 {
         
@@ -97,6 +106,7 @@ extension CharacteristicFormatDescriptor {
     }
 }
 
+//MARK: Unit enum
 extension CharacteristicFormatDescriptor {
     enum Unit: UInt16 {
         
@@ -237,6 +247,7 @@ extension CharacteristicFormatDescriptor {
     }
 }
 
+//MARK: Namespace enum
 extension CharacteristicFormatDescriptor {
     enum Namespace: UInt8 {
         
@@ -253,6 +264,7 @@ extension CharacteristicFormatDescriptor {
     }
 }
 
+//MARK: Description enum
 extension CharacteristicFormatDescriptor {
     enum Description {
         case description(UInt16)

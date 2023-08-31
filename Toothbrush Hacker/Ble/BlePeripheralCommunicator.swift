@@ -48,7 +48,6 @@ class BlePeripheralCommunicator: NSObject {
         guard let cbService = bleServices.cbService else { return }
         let characteristicUuids = bleServices.bleCharacteristics.keys.map { $0 as CBUUID }
         peripheral.discoverCharacteristics(characteristicUuids, for: cbService)
-        print("discoverCharacteristics for: \(cbService)")
     }
     
     func discoverDescriptors(for bleCharacteristic: BleCharacteristicProtocol) {

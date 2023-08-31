@@ -14,6 +14,9 @@ protocol BleCharacteristicProtocol : AnyObject {
     var bleDescriptors: [CBUUID:BleDescriptor] { get }
     var cbCharacteristic: CBCharacteristic? { get }
     
+    var properties: CBCharacteristicProperties? { get }
+    var valueBytes: [UInt8]? { get }
+
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
     func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
@@ -29,8 +32,9 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     let readValueOnDiscover: Bool
     let setToNotify: Bool
     
-    @Published var valueBytes: [UInt8]? = nil
-    @Published var value: ValueType? = nil
+    private(set) var properties: CBCharacteristicProperties? = nil
+    @Published private(set) var valueBytes: [UInt8]? = nil
+    @Published private(set) var value: ValueType? = nil
 
     init(uuid: CBUUID, readValueOnDiscover: Bool = false, setToNotify: Bool = false) {
         self.uuid = uuid
@@ -44,6 +48,8 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         }
         self.bleService = bleService
         self.cbCharacteristic = cbCharacteristic
+        self.properties = cbCharacteristic.properties
+        printPropString()
         
         communicator.discoverDescriptors(for: self)
         if readValueOnDiscover {
@@ -75,7 +81,6 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     //TODO: Format this value using the format descriptor (maybe just the exponent)
     open func format(valueBytes: [UInt8]) -> ValueType? {
-        print("Attempting to format \(valueBytes.toString()) for \(cbCharacteristic!)")
         if ValueType.self == Bool.self {
             if let value = valueBytes.getValue(UInt8.self, at: 0) {
                 return (value != 0) as? ValueType
@@ -98,6 +103,66 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         print("Override `format(valueBytes: [UInt8])` to handle type: \(String(describing: ValueType.self))")
         return nil
     }
+    
+    var canBroadcast: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.broadcast.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canRead: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.read.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canWriteWithoutResponse: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.writeWithoutResponse.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canWrite: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.write.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canNotify: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.notify.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canIndicate: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.indicate.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var canSignedWrite: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.authenticatedSignedWrites.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var hasExtendedProperties: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.extendedProperties.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var requiresEncryptionToNotify: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.notifyEncryptionRequired.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
+    
+    var requiresEncryptionToIndicate: Bool {
+        guard let properties = properties else { return false }
+        let mask = UInt(CBCharacteristicProperties.indicateEncryptionRequired.rawValue)
+        return (UInt(properties.rawValue) & mask) != 0
+    }
 }
 
 extension BleCharacteristic: Equatable {
@@ -114,4 +179,26 @@ extension BleCharacteristic: Hashable {
     }
 }
 
-
+//MARK: Debug helpers
+fileprivate extension BleCharacteristic {
+    func printPropString() {
+        let propString: String = {
+            var s = ""
+            if canBroadcast { s += "broadcast, " }
+            if canRead { s += "read, " }
+            if canWriteWithoutResponse { s += "writeWithoutResponse, " }
+            if canWrite { s += "write, " }
+            if canNotify { s += "notify, " }
+            if canIndicate { s += "indicate, " }
+            if canSignedWrite { s += "authenticatedSignedWrites, " }
+            if hasExtendedProperties { s += "extendedProperties, " }
+            if requiresEncryptionToNotify { s += "notifyEncryptionRequired, " }
+            if requiresEncryptionToIndicate { s += "indicateEncryptionRequired, " }
+            if s.isEmpty {
+                return ""
+            }
+            return String(s.dropLast(2))
+        }()
+        print("\(uuid): \(propString)")
+    }
+}
