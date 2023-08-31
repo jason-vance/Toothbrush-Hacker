@@ -1,5 +1,5 @@
 //
-//  DeviceInformationReader.swift
+//  DeviceInfoReader.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/29/23.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import CoreBluetooth
 
-protocol DeviceInformationReader {
+protocol DeviceInfoReader {
     var manufacturerNamePublisher: Published<String?>.Publisher { get }
     var modelNumberPublisher: Published<String?>.Publisher { get }
     var serialNumberPublisher: Published<String?>.Publisher { get }
@@ -21,7 +21,7 @@ protocol DeviceInformationReader {
     var pnpIdPublisher: Published<Int?>.Publisher { get }
 }
 
-class BleDeviceInformationReader: DeviceInformationReader {
+class BlePeripheralDeviceInfoReader: DeviceInfoReader {
     
     var manufacturerNamePublisher: Published<String?>.Publisher { deviceInfoService.manufacturerNamePublisher }
     var modelNumberPublisher: Published<String?>.Publisher { deviceInfoService.modelNumberPublisher }
@@ -33,14 +33,14 @@ class BleDeviceInformationReader: DeviceInformationReader {
     var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { deviceInfoService.ieeeRegulatoryCertificationPublisher }
     var pnpIdPublisher: Published<Int?>.Publisher { deviceInfoService.pnpIdPublisher }
 
-    let deviceCommunicator: BleDeviceCommunicator
+    let deviceCommunicator: BlePeripheralCommunicator
     let deviceInfoService = DeviceInformationService()
     
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        let communicator = BleDeviceCommunicator.getOrCreate(from: device)
-        communicator.add(services: [deviceInfoService])
+        let communicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        communicator.add(bleServices: [deviceInfoService])
         deviceCommunicator = communicator
     }
 }

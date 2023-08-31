@@ -11,19 +11,19 @@ import CoreBluetooth
 class BleService {
     
     let uuid: CBUUID
-    let characteristics: [CBUUID:BleCharacteristicProtocol]
-    private(set) var service: CBService? = nil
+    let bleCharacteristics: [CBUUID:BleCharacteristicProtocol]
+    private(set) var cbService: CBService? = nil
     
-    init(uuid: CBUUID, characteristics: [CBUUID:BleCharacteristicProtocol]) {
+    init(uuid: CBUUID, bleCharacteristics: [CBUUID:BleCharacteristicProtocol]) {
         self.uuid = uuid
-        self.characteristics = characteristics
+        self.bleCharacteristics = bleCharacteristics
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, discovered cbService: CBService) {
-        guard self.service == nil else {
+    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbService: CBService) {
+        guard self.cbService == nil else {
             return
         }
-        self.service = cbService
+        self.cbService = cbService
         communicator.discoverCharacteristics(for: self)
     }
 }

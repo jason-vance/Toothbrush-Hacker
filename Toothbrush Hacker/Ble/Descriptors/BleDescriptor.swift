@@ -10,28 +10,30 @@ import CoreBluetooth
 
 class BleDescriptor {
     
-    var uuid: CBUUID { descriptor.uuid }
-    let descriptor: CBDescriptor
+    var uuid: CBUUID { cbDescriptor.uuid }
+    unowned let bleCharacteristic: BleCharacteristicProtocol
+    let cbDescriptor: CBDescriptor
     
     @Published var valueBytes: [UInt8]? = nil
     
-    init?(descriptor: CBDescriptor) {
-        self.descriptor = descriptor
+    init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
+        self.cbDescriptor = cbDescriptor
+        self.bleCharacteristic = bleCharacteristic
     }
     
-    static func create(with cbDescriptor: CBDescriptor) -> BleDescriptor? {
-        let descriptor =
-            CharacteristicFormatDescriptor(descriptor: cbDescriptor) ??
-            ClientCharacteristicConfigurationDescriptor(descriptor: cbDescriptor) ??
+    static func create(with cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) -> BleDescriptor? {
+        let bleDescriptor =
+            CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
+            ClientCharacteristicConfigurationDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
             nil
             
-        if descriptor == nil {
+        if bleDescriptor == nil {
             print("Couldn't create BleDescriptor with \(cbDescriptor)")
         }
-        return descriptor
+        return bleDescriptor
     }
     
-    func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
+    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
         guard let data = cbDescriptor.value as? Data else { return }
         valueBytes = [UInt8](data)
     }

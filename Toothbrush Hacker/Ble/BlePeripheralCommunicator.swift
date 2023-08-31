@@ -1,5 +1,5 @@
 //
-//  BleDeviceCommunicator.swift
+//  BlePeripheralCommunicator.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/28/23.
@@ -8,14 +8,14 @@
 import Foundation
 import CoreBluetooth
 
-class BleDeviceCommunicator: NSObject {
+class BlePeripheralCommunicator: NSObject {
     
-    private static var communicators: [CBPeripheral:BleDeviceCommunicator] = [:]
+    private static var communicators: [CBPeripheral:BlePeripheralCommunicator] = [:]
     
-    static func getOrCreate(from peripheral: CBPeripheral) -> BleDeviceCommunicator {
+    static func getOrCreate(from peripheral: CBPeripheral) -> BlePeripheralCommunicator {
         if !communicators.keys.contains(peripheral) {
-            let communicator = BleDeviceCommunicator(
-                connection: BleDeviceConnection.getOrCreate(from: peripheral)
+            let communicator = BlePeripheralCommunicator(
+                connection: BlePeripheralConnection.getOrCreate(from: peripheral)
             )
             communicators[peripheral] = communicator
         }
@@ -23,55 +23,55 @@ class BleDeviceCommunicator: NSObject {
         return communicators[peripheral]!
     }
     
-    private let connection: BleDeviceConnection
+    private let connection: BlePeripheralConnection
     private var peripheral: CBPeripheral { connection.peripheral }
-    private var services: [CBUUID:BleService] = [:]
+    private var bleServices: [CBUUID:BleService] = [:]
     
-    private init(connection: BleDeviceConnection) {
+    private init(connection: BlePeripheralConnection) {
         self.connection = connection
         super.init()
         
         peripheral.delegate = self
     }
     
-    func add(services: [BleService]) {
-        let existingServiceSet = Set(self.services.values.map { $0 as BleService })
-        let newServices = Set(services).subtracting(existingServiceSet)
+    func add(bleServices: [BleService]) {
+        let existingServiceSet = Set(self.bleServices.values.map { $0 as BleService })
+        let newServices = Set(bleServices).subtracting(existingServiceSet)
         guard !newServices.isEmpty else { return }
         
-        newServices.forEach { self.services[$0.uuid] = $0 }
+        newServices.forEach { self.bleServices[$0.uuid] = $0 }
         let serviceUuids = newServices.map { $0.uuid }
         peripheral.discoverServices(serviceUuids)
     }
     
-    func discoverCharacteristics(for service: BleService) {
-        guard let cbService = service.service else { return }
-        let characteristicUuids = service.characteristics.keys.map { $0 as CBUUID }
+    func discoverCharacteristics(for bleServices: BleService) {
+        guard let cbService = bleServices.cbService else { return }
+        let characteristicUuids = bleServices.bleCharacteristics.keys.map { $0 as CBUUID }
         peripheral.discoverCharacteristics(characteristicUuids, for: cbService)
         print("discoverCharacteristics for: \(cbService)")
     }
     
-    func discoverDescriptors(for characteristic: BleCharacteristicProtocol) {
-        guard let cbCharacteristic = characteristic.characteristic else { return }
+    func discoverDescriptors(for bleCharacteristic: BleCharacteristicProtocol) {
+        guard let cbCharacteristic = bleCharacteristic.cbCharacteristic else { return }
         peripheral.discoverDescriptors(for: cbCharacteristic)
     }
     
-    func readValue(for descriptor: BleDescriptor) {
-        peripheral.readValue(for: descriptor.descriptor)
+    func readValue(for bleDescriptor: BleDescriptor) {
+        peripheral.readValue(for: bleDescriptor.cbDescriptor)
     }
     
-    func readValue(for characteristic: BleCharacteristicProtocol) {
-        guard let cbCharacteristic = characteristic.characteristic else { return }
+    func readValue(for bleCharacteristic: BleCharacteristicProtocol) {
+        guard let cbCharacteristic = bleCharacteristic.cbCharacteristic else { return }
         peripheral.readValue(for: cbCharacteristic)
     }
     
-    func startNotifications(for characteristic: BleCharacteristicProtocol) {
-        guard let cbCharacteristic = characteristic.characteristic else { return }
+    func startNotifications(for bleCharacteristic: BleCharacteristicProtocol) {
+        guard let cbCharacteristic = bleCharacteristic.cbCharacteristic else { return }
         peripheral.setNotifyValue(true, for: cbCharacteristic)
     }
 }
 
-extension BleDeviceCommunicator: CBPeripheralDelegate {
+extension BlePeripheralCommunicator: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error = error {
@@ -81,8 +81,8 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         }
         
         for cbService in peripheral.services ?? [] {
-            if let service = services[cbService.uuid] {
-                service.communicator(self, discovered: cbService)
+            if let bleService = bleServices[cbService.uuid] {
+                bleService.communicator(self, discovered: cbService)
             } else {
                 print("didDiscoverService: \(cbService) uuid: \(cbService.uuid.uuidString)")
             }
@@ -96,11 +96,12 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
             return
         }
         
+        guard let bleService = bleServices[cbService.uuid] else { return }
         let serviceUuid = cbService.uuid
         
         for cbCharacteristic in cbService.characteristics ?? [] {
-            if let characteristic = services[serviceUuid]?.characteristics[cbCharacteristic.uuid] {
-                characteristic.communicator(self, discovered: cbCharacteristic)
+            if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[cbCharacteristic.uuid] {
+                characteristic.communicator(self, discovered: cbCharacteristic, for: bleService)
             } else {
                 print("didDiscoverCharacteristic: \(cbCharacteristic) uuid: \(cbCharacteristic.uuid.uuidString)")
             }
@@ -117,7 +118,7 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
         let characteristicUuid = cbCharacteristic.uuid
         
-        if let characteristic = services[serviceUuid]?.characteristics[characteristicUuid] {
+        if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
             for cbDescriptor in cbCharacteristic.descriptors ?? [] {
                 characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
             }
@@ -139,8 +140,8 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         guard let characteristicUuid = cbDescriptor.characteristic?.uuid else { return }
         let descriptorUuid = cbDescriptor.uuid
         
-        if let descriptor = services[serviceUuid]?.characteristics[characteristicUuid]?.descriptors[descriptorUuid] {
-            descriptor.communicator(self, receivedValueUpdateFor: cbDescriptor)
+        if let bleDescriptor = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid]?.bleDescriptors[descriptorUuid] {
+            bleDescriptor.communicator(self, receivedValueUpdateFor: cbDescriptor)
         }
     }
     
@@ -154,7 +155,7 @@ extension BleDeviceCommunicator: CBPeripheralDelegate {
         guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
         let characteristicUuid = cbCharacteristic.uuid
         
-        if let characteristic = services[serviceUuid]?.characteristics[characteristicUuid] {
+        if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
             characteristic.communicator(self, receivedValueUpdateFor: cbCharacteristic)
         }
     }

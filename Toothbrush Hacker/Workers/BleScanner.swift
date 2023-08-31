@@ -1,5 +1,5 @@
 //
-//  DeviceScanner.swift
+//  BleScanner.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/27/23.
@@ -13,7 +13,7 @@ enum ScanningState {
     case scanning
 }
 
-protocol DeviceScanner {
+protocol BleScanner {
     
     var scaninngStatePublisher: Published<ScanningState>.Publisher { get }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { get }

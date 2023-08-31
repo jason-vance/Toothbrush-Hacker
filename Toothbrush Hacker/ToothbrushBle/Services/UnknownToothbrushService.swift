@@ -15,7 +15,7 @@ class UnknownToothbrushService: BleService {
     init() {
         super.init(
             uuid: Self.uuid,
-            characteristics: [:]
+            bleCharacteristics: [:]
         )
     }
 }

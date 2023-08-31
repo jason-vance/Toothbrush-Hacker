@@ -25,17 +25,17 @@ class ConnectedViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
     
-    let toothbrushConnection: BleDeviceConnection
-    let batteryMonitor: DeviceBatteryMonitor
-    let deviceInfoReader: DeviceInformationReader
+    let toothbrushConnection: BlePeripheralConnection
+    let batteryMonitor: BatteryMonitor
+    let deviceInfoReader: DeviceInfoReader
     let toothbrushPropertyReader: ToothbrushPropertyReader
 
     var subs: Set<AnyCancellable> = []
 
     init(
-        toothbrushConnection: BleDeviceConnection,
-        batteryMonitor: DeviceBatteryMonitor,
-        deviceInfoReader: DeviceInformationReader,
+        toothbrushConnection: BlePeripheralConnection,
+        batteryMonitor: BatteryMonitor,
+        deviceInfoReader: DeviceInfoReader,
         toothbrushPropertyReader: ToothbrushPropertyReader
     ) {
         self.toothbrushConnection = toothbrushConnection

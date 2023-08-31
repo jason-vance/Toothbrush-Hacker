@@ -8,22 +8,24 @@
 import Foundation
 import CoreBluetooth
 
-protocol BleCharacteristicProtocol {
+protocol BleCharacteristicProtocol : AnyObject {
     var uuid: CBUUID { get }
-    var descriptors: [CBUUID:BleDescriptor] { get }
-    var characteristic: CBCharacteristic? { get }
+    var bleService: BleService? { get }
+    var bleDescriptors: [CBUUID:BleDescriptor] { get }
+    var cbCharacteristic: CBCharacteristic? { get }
     
-    func communicator(_ communicator: BleDeviceCommunicator, discovered cbCharacteristic: CBCharacteristic)
-    func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
-    func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
+    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
+    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
+    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
 }
 
 //TODO: Check a characteristics properties (readable, writable, etc)
 class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     let uuid: CBUUID
-    private(set) var descriptors: [CBUUID:BleDescriptor] = [:]
-    private(set) var characteristic: CBCharacteristic? = nil
+    unowned private(set) var bleService: BleService? = nil
+    private(set) var bleDescriptors: [CBUUID:BleDescriptor] = [:]
+    private(set) var cbCharacteristic: CBCharacteristic? = nil
     let readValueOnDiscover: Bool
     let setToNotify: Bool
     
@@ -36,11 +38,13 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         self.setToNotify = setToNotify
     }
     
-    final func communicator(_ communicator: BleDeviceCommunicator, discovered cbCharacteristic: CBCharacteristic) {
-        guard self.characteristic == nil else {
+    final func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService) {
+        guard self.cbCharacteristic == nil else {
             return
         }
-        self.characteristic = cbCharacteristic
+        self.bleService = bleService
+        self.cbCharacteristic = cbCharacteristic
+        
         communicator.discoverDescriptors(for: self)
         if readValueOnDiscover {
             communicator.readValue(for: self)
@@ -50,14 +54,14 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         }
     }
     
-    final func communicator(_ communicator: BleDeviceCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
-        guard let descriptor = BleDescriptor.create(with: cbDescriptor) else { return }
+    final func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
+        guard let bleDescriptor = BleDescriptor.create(with: cbDescriptor, bleCharacteristic: self) else { return }
         
-        descriptors[descriptor.uuid] = descriptor
-        communicator.readValue(for: descriptor)
+        bleDescriptors[bleDescriptor.uuid] = bleDescriptor
+        communicator.readValue(for: bleDescriptor)
     }
     
-    final func communicator(_ communicator: BleDeviceCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic) {
+    final func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic) {
         guard let data = cbCharacteristic.value else { return }
         let valueBytes = [UInt8](data)
         
@@ -71,7 +75,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     //TODO: Format this value using the format descriptor (maybe just the exponent)
     open func format(valueBytes: [UInt8]) -> ValueType? {
-        print("Attempting to format \(valueBytes.toString()) for \(characteristic!)")
+        print("Attempting to format \(valueBytes.toString()) for \(cbCharacteristic!)")
         if ValueType.self == Bool.self {
             if let value = valueBytes.getValue(UInt8.self, at: 0) {
                 return (value != 0) as? ValueType

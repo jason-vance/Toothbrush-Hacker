@@ -1,5 +1,5 @@
 //
-//  BleDeviceConnection.swift
+//  BlePeripheralConnection.swift
 //  Toothbrush Hacker
 //
 //  Created by Jason Vance on 8/28/23.
@@ -9,13 +9,13 @@ import Foundation
 import CoreBluetooth
 import Combine
 
-class BleDeviceConnection {
+class BlePeripheralConnection {
     
-    private static var connections: [CBPeripheral:BleDeviceConnection] = [:]
+    private static var connections: [CBPeripheral:BlePeripheralConnection] = [:]
     
-    static func getOrCreate(from peripheral: CBPeripheral) -> BleDeviceConnection {
+    static func getOrCreate(from peripheral: CBPeripheral) -> BlePeripheralConnection {
         if !connections.keys.contains(peripheral) {
-            let connection = BleDeviceConnection(
+            let connection = BlePeripheralConnection(
                 peripheral: peripheral,
                 centralManager: .instance
             )

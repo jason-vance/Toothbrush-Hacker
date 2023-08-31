@@ -21,7 +21,7 @@ class BatteryService: BleService {
         
         super.init(
             uuid: Self.uuid,
-            characteristics: [batteryLevelCharacteristic.uuid: batteryLevelCharacteristic]
+            bleCharacteristics: [batteryLevelCharacteristic.uuid: batteryLevelCharacteristic]
         )
     }
 }

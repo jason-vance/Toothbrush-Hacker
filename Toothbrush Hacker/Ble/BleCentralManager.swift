@@ -58,7 +58,7 @@ class BleCentralManager: NSObject {
     }
 }
 
-extension BleCentralManager: DeviceScanner {
+extension BleCentralManager: BleScanner {
     
     var scaninngStatePublisher: Published<ScanningState>.Publisher { $scanningState }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { $discoveredPeripheral }

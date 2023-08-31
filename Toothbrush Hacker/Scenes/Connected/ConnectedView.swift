@@ -11,10 +11,10 @@ struct ConnectedView: View {
     
     @StateObject var model = ConnectedViewModel(
         toothbrushConnection: AppModel.instance.toothbrushConnection!,
-        batteryMonitor: BleDeviceBatteryMonitor(
+        batteryMonitor: BlePeripheralBatteryMonitor(
             device: AppModel.instance.toothbrushConnection!.peripheral
         ),
-        deviceInfoReader: BleDeviceInformationReader(
+        deviceInfoReader: BlePeripheralDeviceInfoReader(
             device: AppModel.instance.toothbrushConnection!.peripheral
         ),
         toothbrushPropertyReader: ToothbrushPropertyReader(

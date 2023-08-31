@@ -19,11 +19,11 @@ class ScannerViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
     
-    let scanner: DeviceScanner
+    let scanner: BleScanner
 
     var subs: Set<AnyCancellable> = []
     
-    init(scanner: DeviceScanner) {
+    init(scanner: BleScanner) {
         self.scanner = scanner
 
         scanner.scaninngStatePublisher

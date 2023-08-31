@@ -45,7 +45,7 @@ class DeviceInformationService: BleService {
 
         super.init(
             uuid: Self.uuid,
-            characteristics: [
+            bleCharacteristics: [
                 manufacturerNameCharacteristic.uuid: manufacturerNameCharacteristic,
                 modelNumberCharacteristic.uuid: modelNumberCharacteristic,
                 serialNumberCharacteristic.uuid: serialNumberCharacteristic,
