@@ -8,6 +8,7 @@
 import Foundation
 import CoreBluetooth
 
+//TODO: Might need to do some clean up when a device disconnects (the `communicators` especially)
 class BlePeripheralCommunicator: NSObject {
     
     private static var communicators: [CBPeripheral:BlePeripheralCommunicator] = [:]
@@ -69,7 +70,7 @@ class BlePeripheralCommunicator: NSObject {
     }
     
     func startNotifications(for bleCharacteristic: BleCharacteristicProtocol) {
-        guard bleCharacteristic.canNotify else {
+        guard bleCharacteristic.canNotify || bleCharacteristic.canIndicate else {
             print("Attempted to setNotifyValue(true, for: \(bleCharacteristic.uuid)), but it's properties do not include .notify")
             return
         }

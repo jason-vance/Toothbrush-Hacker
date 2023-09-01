@@ -87,52 +87,49 @@ class DaveCharacteristic: BleCharacteristic<Int> {
 
 class UnknownToothbrushService: BleService {
     
-    static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50003")
-    
+    static let uuid0001 = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50001")
+    static let charUuids0001: [CBUUID] = [
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54010"), // Power charging/on/off == 0x03/0x02/0x01
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54020"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54030"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54040"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54050"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54060")
+    ]
+    static let uuid0002 = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50002")
+    static let charUuids0002: [CBUUID] = [
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54070"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54080"), // Power mode? high/low == 0x00/0x02
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54090"), // The brushing time elapsed
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54091"), // The max toothbrush timer time
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540A0"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540B0"), // Power mode? high/low == 0x01/0x00
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540C0")
+    ]
+    static let uuid0003 = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50003")
+    static let charUuids0003: [CBUUID] = [
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540D0"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540E0"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540F0"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54100")
+    ]
+
     private let alice = AliceCharacteristic()
     private let bob = BobCharacteristic()
     private let carl = CarlCharacteristic()
     private let dave = DaveCharacteristic()
 
-    init() {
+    init(uuid: CBUUID) {
+        let bleCharacteristicUuids =
+            uuid == Self.uuid0001 ? Self.charUuids0001 :
+            uuid == Self.uuid0002 ? Self.charUuids0002 :
+            uuid == Self.uuid0003 ? Self.charUuids0003 :
+            []
+        
+        
         super.init(
-            uuid: Self.uuid,
-            bleCharacteristics: [
-                alice.uuid: alice,
-                bob.uuid: bob,
-                carl.uuid: carl,
-                dave.uuid: dave,
-            ]
+            uuid: uuid,
+            bleCharacteristicUuids: bleCharacteristicUuids.map({ BleCharacteristic<Int>(uuid: $0) })
         )
     }
 }
-
-
-/*
- static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50001")
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54010
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54020
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54030
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54040
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54050
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54060
- */
-
-/*
- static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50002")
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54070
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54080
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54090
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54091
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540A0
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540B0
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540C0
- */
-
-/*
- static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50003")
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540D0
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540E0
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D540F0
- didDiscoverCharacteristic: uuid: 477EA600-A260-11E4-AE37-0002A5D54100
- */

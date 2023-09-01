@@ -9,6 +9,7 @@ import Foundation
 import CoreBluetooth
 import Combine
 
+//TODO: Might need to do some extra clean up when a device disconnects (the `connections` especially)
 class BlePeripheralConnection {
     
     private static var connections: [CBPeripheral:BlePeripheralConnection] = [:]
@@ -40,6 +41,8 @@ class BlePeripheralConnection {
     ) {
         self.peripheral = peripheral
         self.centralManager = centralManager
+        
+        listenToMyConnectionEvents()
     }
     
     private func listenToMyConnectionEvents() {
@@ -61,7 +64,6 @@ class BlePeripheralConnection {
         }
     }
     
-    //TODO: Fix bug where connectionContinuation is resume()ed again if you disconnect then reconnect a ble device
     private func onNew(connectionEvent: ConnectionEvent) {
         switch connectionEvent {
         case .didConnect(_):
@@ -88,7 +90,6 @@ class BlePeripheralConnection {
         connectedState = .connecting
         
         print("Connecting to peripheral \(peripheral)")
-        listenToMyConnectionEvents()
         try await withCheckedThrowingContinuation { continuation in
             connectionContinuation = continuation
             centralManager.connect(peripheral: peripheral)

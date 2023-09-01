@@ -19,6 +19,7 @@ protocol BleCharacteristicProtocol : AnyObject {
     
     var canRead: Bool { get }
     var canNotify: Bool { get }
+    var canIndicate: Bool { get }
 
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
