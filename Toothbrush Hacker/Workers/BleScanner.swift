@@ -18,6 +18,6 @@ protocol BleScanner {
     var scaninngStatePublisher: Published<ScanningState>.Publisher { get }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { get }
     
-    func startScan()
+    func startScan() throws
     func stopScan()
 }

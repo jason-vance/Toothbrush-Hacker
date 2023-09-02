@@ -49,7 +49,11 @@ class ScannerViewModel: ObservableObject {
     }
     
     private func startScan() {
-        scanner.startScan()
+        do {
+            try scanner.startScan()
+        } catch {
+            show(alertMessage: "Could not start the scan. Is Bluetooth turned on and are app pemissions granted?")
+        }
     }
     
     private func stopScan() {

@@ -11,41 +11,37 @@ import Combine
 
 class BleCentralManager: NSObject {
     
-    private(set) var centralManager: CBCentralManager! = nil
-    
-    @Published private var managerState: CBManagerState? = nil
+    static let instance: BleCentralManager = BleCentralManager()
     
     @Published private(set) var scanningState: ScanningState = .idle
     @Published private(set) var discoveredPeripheral: DiscoveredPeripheral? = nil
-    
     @Published private(set) var connectionEvent: ConnectionEvent? = nil
-
-    static let instance: BleCentralManager = BleCentralManager()
     
+    private let centralManager: CBCentralManager
+    @Published private var managerState: CBManagerState? = nil
+    
+    private var subs: Set<AnyCancellable> = []
+
     private override init() {
-        super.init()
         centralManager = CBCentralManager(
-            delegate: self,
+            delegate: nil,
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey: true]
         )
+        super.init()
+        centralManager.delegate = self
+
+        makeScanningStateIdleIfCentralIsNoLongerPoweredOn()
     }
     
-//    private func waitForPoweredOnState() async throws {
-//        var sub: AnyCancellable? = nil
-//        try await withCheckedThrowingContinuation { continuation in
-//            sub = $managerState
-//                .compactMap { $0 }
-//                .sink {
-//                    if $0 == .poweredOn {
-//                        continuation.resume()
-//                    } else {
-//                        continuation.resume(throwing: "CBManager is in an invalid state: \(String(describing: $0))")
-//                    }
-//                }
-//        }
-//        sub?.cancel()
-//    }
+    private func makeScanningStateIdleIfCentralIsNoLongerPoweredOn() {
+        $managerState
+            .sink(receiveValue: {
+                guard $0 != .poweredOn else { return }
+                self.scanningState = .idle
+            })
+            .store(in: &subs)
+    }
     
     func connect(peripheral: CBPeripheral) {
         guard peripheral.state == .disconnected else { return }
@@ -63,9 +59,13 @@ extension BleCentralManager: BleScanner {
     var scaninngStatePublisher: Published<ScanningState>.Publisher { $scanningState }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { $discoveredPeripheral }
 
-    func startScan() {
-        scanningState = .scanning
+    //TODO: Add services: [CBUUID] = [], allowDuplicates: Bool = true parameter
+    func startScan() throws {
+        guard managerState == .poweredOn else {
+            throw "Bluetooth does not appear to be on/authorized"
+        }
         
+        scanningState = .scanning
         centralManager.scanForPeripherals(
             withServices: [],
             options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
