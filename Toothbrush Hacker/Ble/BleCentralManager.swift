@@ -58,17 +58,20 @@ extension BleCentralManager: BleScanner {
     
     var scaninngStatePublisher: Published<ScanningState>.Publisher { $scanningState }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { $discoveredPeripheral }
-
-    //TODO: Add services: [CBUUID] = [], allowDuplicates: Bool = true parameter
+    
     func startScan() throws {
+        try startScan(configuration: ScanConfiguration(services: [], allowDuplicates: true))
+    }
+    
+    func startScan(configuration: ScanConfiguration) throws {
         guard managerState == .poweredOn else {
             throw "Bluetooth does not appear to be on/authorized"
         }
         
         scanningState = .scanning
         centralManager.scanForPeripherals(
-            withServices: [],
-            options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
+            withServices: configuration.services,
+            options: [CBCentralManagerScanOptionAllowDuplicatesKey: configuration.allowDuplicates]
         )
     }
     

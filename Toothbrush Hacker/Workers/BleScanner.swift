@@ -13,11 +13,17 @@ enum ScanningState {
     case scanning
 }
 
+struct ScanConfiguration {
+    let services: [CBUUID]
+    let allowDuplicates: Bool
+}
+
 protocol BleScanner {
     
     var scaninngStatePublisher: Published<ScanningState>.Publisher { get }
     var discoveredPeripheralPublisher: Published<DiscoveredPeripheral?>.Publisher { get }
     
     func startScan() throws
+    func startScan(configuration: ScanConfiguration) throws
     func stopScan()
 }
