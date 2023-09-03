@@ -90,7 +90,7 @@ class UnknownToothbrushService: BleService {
     static let uuid0001 = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D50001")
     static let charUuids0001: [CBUUID] = [
         CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54010"), // Power charging/on/off == 0x03/0x02/0x01
-        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54020"),
+        CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54020"), // Discriptor's value as string = "Gentle, Extra Gentle"
         CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54030"),
         CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54040"),
         CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54050"),

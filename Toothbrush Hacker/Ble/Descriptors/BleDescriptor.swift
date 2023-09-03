@@ -25,13 +25,12 @@ class BleDescriptor {
         var bleDescriptor =
             CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
             ClientCharacteristicConfigurationDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
+            bleCharacteristic.createDescriptor(with: cbDescriptor) ??
             nil
             
         if bleDescriptor == nil {
-            bleDescriptor = bleCharacteristic.createDescriptor(with: cbDescriptor)
-        }
-        if bleDescriptor == nil {
-            print("Couldn't create BleDescriptor with \(cbDescriptor) for \(bleCharacteristic.uuid)")
+            bleDescriptor = BleDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+            print("Unknown BleDescriptor with uuid: \(cbDescriptor.uuid) for: \(bleCharacteristic.uuid)")
         }
         return bleDescriptor
     }
