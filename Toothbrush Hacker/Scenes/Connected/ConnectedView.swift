@@ -14,7 +14,13 @@ struct ConnectedView: View {
         batteryMonitor: BlePeripheralBatteryMonitor(
             device: AppModel.instance.toothbrushConnection!.peripheral
         ),
-        deviceInfoReader: BlePeripheralDeviceInfoReader(
+        deviceBasicInfoReader: BlePeripheralDeviceInfoReader(
+            device: AppModel.instance.toothbrushConnection!.peripheral
+        ),
+        deviceVersionInfoReader: BlePeripheralDeviceInfoReader(
+            device: AppModel.instance.toothbrushConnection!.peripheral
+        ),
+        deviceExtendedInfoReader: BlePeripheralDeviceInfoReader(
             device: AppModel.instance.toothbrushConnection!.peripheral
         ),
         toothbrushPropertyReader: ToothbrushPropertyReader(

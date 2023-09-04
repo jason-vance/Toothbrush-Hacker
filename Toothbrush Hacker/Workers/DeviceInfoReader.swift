@@ -9,19 +9,25 @@ import Foundation
 import Combine
 import CoreBluetooth
 
-protocol DeviceInfoReader {
+protocol DeviceBasicInfoReader {
     var manufacturerNamePublisher: Published<String?>.Publisher { get }
     var modelNumberPublisher: Published<String?>.Publisher { get }
     var serialNumberPublisher: Published<String?>.Publisher { get }
+}
+
+protocol DeviceVersionInfoReader {
     var hardwareRevisionPublisher: Published<String?>.Publisher { get }
     var firmwareRevisionPublisher: Published<String?>.Publisher { get }
     var softwareRevisionPublisher: Published<String?>.Publisher { get }
+}
+
+protocol DeviceExtendedInfoReader {
     var systemIdPublisher: Published<Int?>.Publisher { get }
     var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { get }
     var pnpIdPublisher: Published<Int?>.Publisher { get }
 }
 
-class BlePeripheralDeviceInfoReader: DeviceInfoReader {
+class BlePeripheralDeviceInfoReader: DeviceBasicInfoReader, DeviceVersionInfoReader, DeviceExtendedInfoReader {
     
     var manufacturerNamePublisher: Published<String?>.Publisher { deviceInfoService.manufacturerNamePublisher }
     var modelNumberPublisher: Published<String?>.Publisher { deviceInfoService.modelNumberPublisher }

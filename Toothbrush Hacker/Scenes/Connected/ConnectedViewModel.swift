@@ -27,7 +27,9 @@ class ConnectedViewModel: ObservableObject {
     
     let toothbrushConnection: BlePeripheralConnection
     let batteryMonitor: BatteryMonitor
-    let deviceInfoReader: DeviceInfoReader
+    let deviceBasicInfoReader: DeviceBasicInfoReader
+    let deviceVersionInfoReader: DeviceVersionInfoReader
+    let deviceExtendedInfoReader: DeviceExtendedInfoReader
     let toothbrushPropertyReader: ToothbrushPropertyReader
 
     var subs: Set<AnyCancellable> = []
@@ -35,12 +37,16 @@ class ConnectedViewModel: ObservableObject {
     init(
         toothbrushConnection: BlePeripheralConnection,
         batteryMonitor: BatteryMonitor,
-        deviceInfoReader: DeviceInfoReader,
+        deviceBasicInfoReader: DeviceBasicInfoReader,
+        deviceVersionInfoReader: DeviceVersionInfoReader,
+        deviceExtendedInfoReader: DeviceExtendedInfoReader,
         toothbrushPropertyReader: ToothbrushPropertyReader
     ) {
         self.toothbrushConnection = toothbrushConnection
         self.batteryMonitor = batteryMonitor
-        self.deviceInfoReader = deviceInfoReader
+        self.deviceBasicInfoReader = deviceBasicInfoReader
+        self.deviceVersionInfoReader = deviceVersionInfoReader
+        self.deviceExtendedInfoReader = deviceExtendedInfoReader
         self.toothbrushPropertyReader = toothbrushPropertyReader
 
         setupSubscribers()
@@ -59,39 +65,39 @@ class ConnectedViewModel: ObservableObject {
     }
     
     private func subscribeToDeviceInfo() {
-        deviceInfoReader.manufacturerNamePublisher
+        deviceBasicInfoReader.manufacturerNamePublisher
             .receive(on: RunLoop.main)
             .sink { self.manufacturerName = $0 }
             .store(in: &subs)
-        deviceInfoReader.modelNumberPublisher
+        deviceBasicInfoReader.modelNumberPublisher
             .receive(on: RunLoop.main)
             .sink { self.modelNumber = $0 }
             .store(in: &subs)
-        deviceInfoReader.serialNumberPublisher
+        deviceBasicInfoReader.serialNumberPublisher
             .receive(on: RunLoop.main)
             .sink { self.serialNumber = $0 }
             .store(in: &subs)
-        deviceInfoReader.hardwareRevisionPublisher
+        deviceVersionInfoReader.hardwareRevisionPublisher
             .receive(on: RunLoop.main)
             .sink { self.hardwareRevision = $0 }
             .store(in: &subs)
-        deviceInfoReader.firmwareRevisionPublisher
+        deviceVersionInfoReader.firmwareRevisionPublisher
             .receive(on: RunLoop.main)
             .sink { self.firmwareRevision = $0 }
             .store(in: &subs)
-        deviceInfoReader.softwareRevisionPublisher
+        deviceVersionInfoReader.softwareRevisionPublisher
             .receive(on: RunLoop.main)
             .sink { self.softwareRevision = $0 }
             .store(in: &subs)
-        deviceInfoReader.systemIdPublisher
+        deviceExtendedInfoReader.systemIdPublisher
             .receive(on: RunLoop.main)
             .sink { self.systemId = $0 }
             .store(in: &subs)
-        deviceInfoReader.ieeeRegulatoryCertificationPublisher
+        deviceExtendedInfoReader.ieeeRegulatoryCertificationPublisher
             .receive(on: RunLoop.main)
             .sink { self.ieeeCertification = $0 }
             .store(in: &subs)
-        deviceInfoReader.pnpIdPublisher
+        deviceExtendedInfoReader.pnpIdPublisher
             .receive(on: RunLoop.main)
             .sink { self.pnpId = $0 }
             .store(in: &subs)
