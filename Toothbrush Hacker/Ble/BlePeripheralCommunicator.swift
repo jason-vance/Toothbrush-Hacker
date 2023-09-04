@@ -108,8 +108,8 @@ extension BlePeripheralCommunicator: CBPeripheralDelegate {
         let serviceUuid = cbService.uuid
         
         for cbCharacteristic in cbService.characteristics ?? [] {
-            if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[cbCharacteristic.uuid] {
-                characteristic.communicator(self, discovered: cbCharacteristic, for: bleService)
+            if let bleCharacteristic = bleServices[serviceUuid]?.bleCharacteristics[cbCharacteristic.uuid] {
+                bleCharacteristic.communicator(self, discovered: cbCharacteristic, for: bleService)
             } else {
                 print("didDiscoverCharacteristic: \(cbCharacteristic) uuid: \(cbCharacteristic.uuid.uuidString)")
             }
@@ -126,14 +126,29 @@ extension BlePeripheralCommunicator: CBPeripheralDelegate {
         guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
         let characteristicUuid = cbCharacteristic.uuid
         
-        if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
+        if let bleCharacteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
             for cbDescriptor in cbCharacteristic.descriptors ?? [] {
-                characteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
+                bleCharacteristic.communicator(self, discovered: cbDescriptor, for: cbCharacteristic)
             }
         } else {
             for d in cbCharacteristic.descriptors ?? [] {
                 print("didDiscoverDescriptor: \(d) forCharacteristic: \(cbCharacteristic.uuid)")
             }
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor cbCharacteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            //TODO: Surface this error
+            print("Error in didUpdateValueFor characteristics: \(error.localizedDescription)")
+            return
+        }
+        
+        guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
+        let characteristicUuid = cbCharacteristic.uuid
+        
+        if let bleCharacteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
+            bleCharacteristic.communicator(self, receivedValueUpdateFor: cbCharacteristic)
         }
     }
     
@@ -150,21 +165,6 @@ extension BlePeripheralCommunicator: CBPeripheralDelegate {
         
         if let bleDescriptor = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid]?.bleDescriptors[descriptorUuid] {
             bleDescriptor.communicator(self, receivedValueUpdateFor: cbDescriptor)
-        }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor cbCharacteristic: CBCharacteristic, error: Error?) {
-        if let error = error {
-            //TODO: Surface this error
-            print("Error in didUpdateValueFor characteristics: \(error.localizedDescription)")
-            return
-        }
-        
-        guard let serviceUuid = cbCharacteristic.service?.uuid else { return }
-        let characteristicUuid = cbCharacteristic.uuid
-        
-        if let characteristic = bleServices[serviceUuid]?.bleCharacteristics[characteristicUuid] {
-            characteristic.communicator(self, receivedValueUpdateFor: cbCharacteristic)
         }
     }
 }
