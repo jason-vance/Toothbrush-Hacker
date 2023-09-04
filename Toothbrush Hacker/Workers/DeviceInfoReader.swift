@@ -40,13 +40,16 @@ class BlePeripheralDeviceInfoReader: DeviceBasicInfoReader, DeviceVersionInfoRea
     var pnpIdPublisher: Published<Int?>.Publisher { deviceInfoService.pnpIdPublisher }
 
     let deviceCommunicator: BlePeripheralCommunicator
-    let deviceInfoService = DeviceInformationService()
+    let deviceInfoService: DeviceInformationService
     
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        let communicator = BlePeripheralCommunicator.getOrCreate(from: device)
-        communicator.add(bleServices: [deviceInfoService])
-        deviceCommunicator = communicator
+        deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        deviceInfoService = DeviceInformationService(communicator: deviceCommunicator)
+        
+        Task {
+            await deviceCommunicator.register(bleServices: [deviceInfoService])
+        }
     }
 }

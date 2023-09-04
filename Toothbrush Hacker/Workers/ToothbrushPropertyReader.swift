@@ -12,19 +12,30 @@ import Combine
 class ToothbrushPropertyReader {
 
     let deviceCommunicator: BlePeripheralCommunicator
-    let unknownToothbrushService0001 = UnknownToothbrushService(uuid: UnknownToothbrushService.uuid0001)
-    let unknownToothbrushService0002 = UnknownToothbrushService(uuid: UnknownToothbrushService.uuid0002)
-    let unknownToothbrushService0003 = UnknownToothbrushService(uuid: UnknownToothbrushService.uuid0003)
+    let unknownToothbrushService0001: UnknownToothbrushService
+    let unknownToothbrushService0002: UnknownToothbrushService
+    let unknownToothbrushService0003: UnknownToothbrushService
 
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        let communicator = BlePeripheralCommunicator.getOrCreate(from: device)
-        communicator.add(bleServices: [
-            unknownToothbrushService0001,
-            unknownToothbrushService0002,
-            unknownToothbrushService0003
-        ])
-        deviceCommunicator = communicator
+        deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        unknownToothbrushService0001 = UnknownToothbrushService(
+            uuid: UnknownToothbrushService.uuid0001,
+            communicator: deviceCommunicator)
+        unknownToothbrushService0002 = UnknownToothbrushService(
+            uuid: UnknownToothbrushService.uuid0002,
+            communicator: deviceCommunicator)
+        unknownToothbrushService0003 = UnknownToothbrushService(
+            uuid: UnknownToothbrushService.uuid0003,
+            communicator: deviceCommunicator)
+
+        Task {
+            await deviceCommunicator.register(bleServices: [
+                unknownToothbrushService0001,
+                unknownToothbrushService0002,
+                unknownToothbrushService0003
+            ])
+        }
     }
 }

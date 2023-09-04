@@ -19,16 +19,18 @@ class BlePeripheralBatteryMonitor: BatteryMonitor {
     var batteryLevelPublisher: Published<Double?>.Publisher { $currentBatteryLevel }
 
     let deviceCommunicator: BlePeripheralCommunicator
-    let batteryService = BatteryService()
+    let batteryService: BatteryService
     
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        let communicator = BlePeripheralCommunicator.getOrCreate(from: device)
-        communicator.add(bleServices: [batteryService])
-        deviceCommunicator = communicator
+        deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        batteryService = BatteryService(communicator: deviceCommunicator)
         
         setupBatteryLevelSub()
+        Task{
+            await deviceCommunicator.register(bleServices: [batteryService])
+        }        
     }
     
     private func setupBatteryLevelSub() {

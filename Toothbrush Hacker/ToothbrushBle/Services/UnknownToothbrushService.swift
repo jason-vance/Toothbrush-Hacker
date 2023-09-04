@@ -21,17 +21,23 @@ class AliceCharacteristic: BleCharacteristic<Int> {
     class A0D0_Descriptor: BleDescriptor {
         static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D5A0D0")
         
-        override init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
+        override init?(
+            cbDescriptor: CBDescriptor,
+            bleCharacteristic: BleCharacteristicProtocol,
+            communicator: BlePeripheralCommunicator
+        ) {
             guard cbDescriptor.uuid == Self.uuid else { return nil }
-            super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+            super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
         }
     }
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540D0")
-    init() { super.init(uuid: Self.uuid, readValueOnDiscover: true) }
+    init(communicator: BlePeripheralCommunicator) {
+        super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true)
+    }
     
-    override func createDescriptor(with cbDescriptor: CBDescriptor) -> BleDescriptor? {
-        A0D0_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self) ?? nil
+    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor? {
+        A0D0_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self, communicator: communicator) ?? nil
     }
 }
 
@@ -43,7 +49,7 @@ class BobCharacteristic: BleCharacteristic<Int> {
      */
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540E0")
-    init() { super.init(uuid: Self.uuid) }
+    init(communicator: BlePeripheralCommunicator) { super.init(uuid: Self.uuid, communicator: communicator) }
 }
 
 class CarlCharacteristic: BleCharacteristic<Int> {
@@ -55,7 +61,9 @@ class CarlCharacteristic: BleCharacteristic<Int> {
      */
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540F0")
-    init() { super.init(uuid: Self.uuid, readValueOnDiscover: true, setToNotify: true) }
+    init(communicator: BlePeripheralCommunicator) {
+        super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true, setToNotify: true)
+    }
 }
 
 class DaveCharacteristic: BleCharacteristic<Int> {
@@ -71,17 +79,23 @@ class DaveCharacteristic: BleCharacteristic<Int> {
     class A100_Descriptor: BleDescriptor {
         static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D5A100")
         
-        override init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
+        override init?(
+            cbDescriptor: CBDescriptor,
+            bleCharacteristic: BleCharacteristicProtocol,
+            communicator: BlePeripheralCommunicator
+        ) {
             guard cbDescriptor.uuid == Self.uuid else { return nil }
-            super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+            super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
         }
     }
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54100")
-    init() { super.init(uuid: Self.uuid, readValueOnDiscover: true) }
+    init(communicator: BlePeripheralCommunicator) {
+        super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true)
+    }
     
-    override func createDescriptor(with cbDescriptor: CBDescriptor) -> BleDescriptor? {
-        A100_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self) ?? nil
+    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor? {
+        A100_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self, communicator: communicator) ?? nil
     }
 }
 
@@ -114,13 +128,13 @@ class UnknownToothbrushService: BleService {
         CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54100")
     ]
 
-    private let alice = AliceCharacteristic()
-    private let bob = BobCharacteristic()
-    private let carl = CarlCharacteristic()
-    private let dave = DaveCharacteristic()
+//    private let alice = AliceCharacteristic()
+//    private let bob = BobCharacteristic()
+//    private let carl = CarlCharacteristic()
+//    private let dave = DaveCharacteristic()
 
-    init(uuid: CBUUID) {
-        let bleCharacteristicUuids =
+    init(uuid: CBUUID, communicator: BlePeripheralCommunicator) {
+        let bleCharacteristics =
             uuid == Self.uuid0001 ? Self.charUuids0001 :
             uuid == Self.uuid0002 ? Self.charUuids0002 :
             uuid == Self.uuid0003 ? Self.charUuids0003 :
@@ -129,7 +143,8 @@ class UnknownToothbrushService: BleService {
         
         super.init(
             uuid: uuid,
-            bleCharacteristicUuids: bleCharacteristicUuids.map({ BleCharacteristic<Int>(uuid: $0) })
+            bleCharacteristics: bleCharacteristics.map({ BleCharacteristic<Int>(uuid: $0, communicator: communicator) }),
+            communicator: communicator
         )
     }
 }

@@ -13,7 +13,11 @@ class ModelNumberCharacteristic: BleCharacteristic<String> {
     
     static let uuid = CBUUID(string: "2A24")
     
-    init() {
-        super.init(uuid: Self.uuid, readValueOnDiscover: true)
+    init(communicator: BlePeripheralCommunicator) {
+        super.init(
+            uuid: Self.uuid,
+            communicator: communicator,
+            readValueOnDiscover: true
+        )
     }
 }

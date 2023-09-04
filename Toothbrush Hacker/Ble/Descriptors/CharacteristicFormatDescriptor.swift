@@ -22,9 +22,9 @@ class CharacteristicFormatDescriptor: BleDescriptor {
     
     private var subs: Set<AnyCancellable> = []
 
-    override init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
+    override init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol, communicator: BlePeripheralCommunicator) {
         guard cbDescriptor.uuid == Self.uuid else { return nil }
-        super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+        super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
         
         $valueBytes
             .compactMap { $0 }

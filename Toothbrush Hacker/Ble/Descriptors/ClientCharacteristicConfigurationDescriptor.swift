@@ -12,8 +12,12 @@ class ClientCharacteristicConfigurationDescriptor: BleDescriptor {
     
     static let uuid = CBUUID(string: "2902")
     
-    override init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
+    override init?(
+        cbDescriptor: CBDescriptor,
+        bleCharacteristic: BleCharacteristicProtocol,
+        communicator: BlePeripheralCommunicator
+    ) {
         guard cbDescriptor.uuid == Self.uuid else { return nil }
-        super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+        super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
     }
 }

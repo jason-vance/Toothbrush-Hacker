@@ -7,38 +7,75 @@
 
 import Foundation
 import CoreBluetooth
+import Combine
 
 class BleDescriptor {
     
     var uuid: CBUUID { cbDescriptor.uuid }
+    unowned let cbDescriptor: CBDescriptor
     unowned let bleCharacteristic: BleCharacteristicProtocol
-    let cbDescriptor: CBDescriptor
-    
+    unowned let communicator: BlePeripheralCommunicator
+
     @Published var valueBytes: [UInt8]? = nil
     
-    init?(cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) {
-        self.cbDescriptor = cbDescriptor
-        self.bleCharacteristic = bleCharacteristic
-    }
+    private var subs: Set<AnyCancellable> = []
     
-    static func create(with cbDescriptor: CBDescriptor, bleCharacteristic: BleCharacteristicProtocol) -> BleDescriptor? {
+    static func create(
+        with cbDescriptor: CBDescriptor,
+        bleCharacteristic: BleCharacteristicProtocol,
+        communicator: BlePeripheralCommunicator
+    ) -> BleDescriptor? {
         var bleDescriptor =
-            CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
-            ClientCharacteristicConfigurationDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic) ??
-            bleCharacteristic.createDescriptor(with: cbDescriptor) ??
+            CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator) ??
+            ClientCharacteristicConfigurationDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator) ??
+            bleCharacteristic.createDescriptor(with: cbDescriptor, communicator: communicator) ??
             nil
             
         if bleDescriptor == nil {
-            bleDescriptor = BleDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic)
+            bleDescriptor = BleDescriptor(
+                cbDescriptor: cbDescriptor,
+                bleCharacteristic: bleCharacteristic,
+                communicator: communicator
+            )
             print("Unknown BleDescriptor with uuid: \(cbDescriptor.uuid) for: \(bleCharacteristic.uuid)")
         }
         return bleDescriptor
     }
     
-    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
+    init?(
+        cbDescriptor: CBDescriptor,
+        bleCharacteristic: BleCharacteristicProtocol,
+        communicator: BlePeripheralCommunicator)
+    {
+        self.cbDescriptor = cbDescriptor
+        self.bleCharacteristic = bleCharacteristic
+        self.communicator = communicator
+        
+        subscribeToDescriptorPublishers()
+    }
+    
+    private func subscribeToDescriptorPublishers() {
+        Task {
+            await communicator.$updatedValueDescriptor
+                .filter(isMy(descriptor:))
+                .sink(receiveValue: updateValue(descriptor:))
+                .store(in: &self.subs)
+        }
+    }
+    
+    private func isMy(descriptor: (CBDescriptor?, Error?)) -> Bool {
+        return descriptor.0?.uuid == uuid
+    }
+    
+    private func updateValue(descriptor: (CBDescriptor?, Error?)) {
+        guard let cbDescriptor = descriptor.0 else { return }
         guard let data = cbDescriptor.value as? Data else { return }
         valueBytes = [UInt8](data)
         printValueBytes()
+    }
+    
+    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
+        updateValue(descriptor: (cbDescriptor, nil))
     }
 }
 

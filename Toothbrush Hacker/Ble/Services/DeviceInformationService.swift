@@ -22,20 +22,30 @@ class DeviceInformationService: BleService {
     var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { ieeeRegulatoryCertificationCharacteristic.$value }
     var pnpIdPublisher: Published<Int?>.Publisher { pnpIdCharacteristic.$value }
 
-    private let manufacturerNameCharacteristic = ManufacturerNameCharacteristic()
-    private let modelNumberCharacteristic = ModelNumberCharacteristic()
-    private let serialNumberCharacteristic = SerialNumberCharacteristic()
-    private let hardwareRevisionCharacteristic = HardwareRevisionCharacteristic()
-    private let firmwareRevisionCharacteristic = FirmwareRevisionCharacteristic()
-    private let softwareRevisionCharacteristic = SoftwareRevisionCharacteristic()
-    private let systemIdCharacteristic = SystemIdCharacteristic()
-    private let ieeeRegulatoryCertificationCharacteristic = IeeeRegulatoryCertificationCharacteristic()
-    private let pnpIdCharacteristic = PnpIdCharacteristic()
+    private let manufacturerNameCharacteristic: ManufacturerNameCharacteristic
+    private let modelNumberCharacteristic: ModelNumberCharacteristic
+    private let serialNumberCharacteristic: SerialNumberCharacteristic
+    private let hardwareRevisionCharacteristic: HardwareRevisionCharacteristic
+    private let firmwareRevisionCharacteristic: FirmwareRevisionCharacteristic
+    private let softwareRevisionCharacteristic: SoftwareRevisionCharacteristic
+    private let systemIdCharacteristic: SystemIdCharacteristic
+    private let ieeeRegulatoryCertificationCharacteristic: IeeeRegulatoryCertificationCharacteristic
+    private let pnpIdCharacteristic: PnpIdCharacteristic
 
-    init() {
+    init(communicator: BlePeripheralCommunicator) {
+        manufacturerNameCharacteristic = ManufacturerNameCharacteristic(communicator: communicator)
+        modelNumberCharacteristic = ModelNumberCharacteristic(communicator: communicator)
+        serialNumberCharacteristic = SerialNumberCharacteristic(communicator: communicator)
+        hardwareRevisionCharacteristic = HardwareRevisionCharacteristic(communicator: communicator)
+        firmwareRevisionCharacteristic = FirmwareRevisionCharacteristic(communicator: communicator)
+        softwareRevisionCharacteristic = SoftwareRevisionCharacteristic(communicator: communicator)
+        systemIdCharacteristic = SystemIdCharacteristic(communicator: communicator)
+        ieeeRegulatoryCertificationCharacteristic = IeeeRegulatoryCertificationCharacteristic(communicator: communicator)
+        pnpIdCharacteristic = PnpIdCharacteristic(communicator: communicator)
+        
         super.init(
             uuid: Self.uuid,
-            bleCharacteristicUuids: [
+            bleCharacteristics: [
                 manufacturerNameCharacteristic,
                 modelNumberCharacteristic,
                 serialNumberCharacteristic,
@@ -45,7 +55,8 @@ class DeviceInformationService: BleService {
                 systemIdCharacteristic,
                 ieeeRegulatoryCertificationCharacteristic,
                 pnpIdCharacteristic,
-            ]
+            ],
+            communicator: communicator
         )
     }
 }
