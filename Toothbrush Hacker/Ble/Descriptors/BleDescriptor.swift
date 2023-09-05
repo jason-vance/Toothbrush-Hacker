@@ -14,7 +14,7 @@ class BleDescriptor {
     var uuid: CBUUID { cbDescriptor.uuid }
     unowned let cbDescriptor: CBDescriptor
     unowned let bleCharacteristic: BleCharacteristicProtocol
-    unowned let communicator: BlePeripheralCommunicator
+    unowned let communicator: BlePeripheralCommunicator_Published
 
     @Published var valueBytes: [UInt8]? = nil
     
@@ -23,7 +23,7 @@ class BleDescriptor {
     static func create(
         with cbDescriptor: CBDescriptor,
         bleCharacteristic: BleCharacteristicProtocol,
-        communicator: BlePeripheralCommunicator
+        communicator: BlePeripheralCommunicator_Published
     ) -> BleDescriptor? {
         var bleDescriptor =
             CharacteristicFormatDescriptor(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator) ??
@@ -45,7 +45,7 @@ class BleDescriptor {
     init?(
         cbDescriptor: CBDescriptor,
         bleCharacteristic: BleCharacteristicProtocol,
-        communicator: BlePeripheralCommunicator)
+        communicator: BlePeripheralCommunicator_Published)
     {
         self.cbDescriptor = cbDescriptor
         self.bleCharacteristic = bleCharacteristic

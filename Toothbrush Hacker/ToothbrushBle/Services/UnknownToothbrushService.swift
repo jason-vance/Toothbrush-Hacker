@@ -24,7 +24,7 @@ class AliceCharacteristic: BleCharacteristic<Int> {
         override init?(
             cbDescriptor: CBDescriptor,
             bleCharacteristic: BleCharacteristicProtocol,
-            communicator: BlePeripheralCommunicator
+            communicator: BlePeripheralCommunicator_Published
         ) {
             guard cbDescriptor.uuid == Self.uuid else { return nil }
             super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
@@ -32,11 +32,11 @@ class AliceCharacteristic: BleCharacteristic<Int> {
     }
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540D0")
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true)
     }
     
-    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor? {
+    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator_Published) -> BleDescriptor? {
         A0D0_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self, communicator: communicator) ?? nil
     }
 }
@@ -49,7 +49,7 @@ class BobCharacteristic: BleCharacteristic<Int> {
      */
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540E0")
-    init(communicator: BlePeripheralCommunicator) { super.init(uuid: Self.uuid, communicator: communicator) }
+    init(communicator: BlePeripheralCommunicator_Published) { super.init(uuid: Self.uuid, communicator: communicator) }
 }
 
 class CarlCharacteristic: BleCharacteristic<Int> {
@@ -61,7 +61,7 @@ class CarlCharacteristic: BleCharacteristic<Int> {
      */
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D540F0")
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true, setToNotify: true)
     }
 }
@@ -82,7 +82,7 @@ class DaveCharacteristic: BleCharacteristic<Int> {
         override init?(
             cbDescriptor: CBDescriptor,
             bleCharacteristic: BleCharacteristicProtocol,
-            communicator: BlePeripheralCommunicator
+            communicator: BlePeripheralCommunicator_Published
         ) {
             guard cbDescriptor.uuid == Self.uuid else { return nil }
             super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)
@@ -90,11 +90,11 @@ class DaveCharacteristic: BleCharacteristic<Int> {
     }
     
     static let uuid = CBUUID(string: "477EA600-A260-11E4-AE37-0002A5D54100")
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(uuid: Self.uuid, communicator: communicator, readValueOnDiscover: true)
     }
     
-    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor? {
+    override func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator_Published) -> BleDescriptor? {
         A100_Descriptor(cbDescriptor: cbDescriptor, bleCharacteristic: self, communicator: communicator) ?? nil
     }
 }
@@ -133,7 +133,7 @@ class UnknownToothbrushService: BleService {
 //    private let carl = CarlCharacteristic()
 //    private let dave = DaveCharacteristic()
 
-    init(uuid: CBUUID, communicator: BlePeripheralCommunicator) {
+    init(uuid: CBUUID, communicator: BlePeripheralCommunicator_Published) {
         let bleCharacteristics =
             uuid == Self.uuid0001 ? Self.charUuids0001 :
             uuid == Self.uuid0002 ? Self.charUuids0002 :

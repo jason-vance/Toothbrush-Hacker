@@ -116,7 +116,7 @@ class ConnectedViewModel: ObservableObject {
     }
     
     func fetchBatteryLevel() {
-        batteryMonitor.start()
+        batteryMonitor.fetchCurrentBatteryLevel()
     }
     
     func disconnect() {

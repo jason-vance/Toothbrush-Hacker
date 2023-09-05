@@ -11,7 +11,7 @@ import CoreBluetooth
 
 protocol BatteryMonitor {
     var batteryLevelPublisher: Published<Double?>.Publisher { get }
-    func start()
+    func fetchCurrentBatteryLevel()
 }
 
 class BlePeripheralBatteryMonitor: BatteryMonitor {
@@ -20,27 +20,28 @@ class BlePeripheralBatteryMonitor: BatteryMonitor {
     var batteryLevelPublisher: Published<Double?>.Publisher { $currentBatteryLevel }
 
     let deviceCommunicator: BlePeripheralCommunicator
-    let batteryService: BatteryService
     
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
         deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
-        batteryService = BatteryService(communicator: deviceCommunicator)
-        
-        setupBatteryLevelSub()
     }
-    
-    private func setupBatteryLevelSub() {
-        batteryService.batteryLevelPublisher
-            .compactMap { $0 }
-            .sink { self.currentBatteryLevel = Double($0) / 100.0 }
-            .store(in: &subs)
-    }
-    
-    func start() {
+
+    func fetchCurrentBatteryLevel() {
         Task{
-            await deviceCommunicator.register(bleServices: [batteryService])
+            do {
+                let bytes = try await deviceCommunicator.readCharacteristicValue(
+                    BatteryLevelCharacteristic.uuid,
+                    inService: BatteryService.uuid
+                )
+                if let batteryLevelInt = bytes.getValue(Int.self) {
+                    currentBatteryLevel = Double(batteryLevelInt) / 100.0
+                } else {
+                    print("Something went wrong parsing those bytes")
+                }
+            } catch {
+                print("Error in readCurrentBatteryLevel: \(error.localizedDescription)")
+            }
         }
     }
 }

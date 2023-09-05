@@ -15,6 +15,7 @@
 		5607C7132A9FFA6200E90A3B /* PnpIdCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */; };
 		5607C7172AA06B5D00E90A3B /* UnknownToothbrushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */; };
 		5607C7192AA06C1000E90A3B /* ToothbrushPropertyReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */; };
+		5607C71E2AA6C00800E90A3B /* BlePeripheralCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */; };
 		564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */; };
 		564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09442A9B3C0900AE3482 /* ScannerView.swift */; };
 		564E09472A9B3C0B00AE3482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09462A9B3C0B00AE3482 /* Assets.xcassets */; };
@@ -30,7 +31,7 @@
 		564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09722A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift */; };
 		564E09772A9D6E3F00AE3482 /* BlePeripheralConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09762A9D6E3F00AE3482 /* BlePeripheralConnection.swift */; };
 		564E097C2A9D755100AE3482 /* StringAsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097B2A9D755100AE3482 /* StringAsError.swift */; };
-		564E097E2A9D775400AE3482 /* BlePeripheralCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097D2A9D775400AE3482 /* BlePeripheralCommunicator.swift */; };
+		564E097E2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097D2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift */; };
 		564E09802A9DC2FE00AE3482 /* DiscoveredPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E097F2A9DC2FE00AE3482 /* DiscoveredPeripheral.swift */; };
 		564E09842A9DE59100AE3482 /* BleCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09832A9DE59100AE3482 /* BleCentralManager.swift */; };
 		564E09862A9DF1C500AE3482 /* ConnectionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09852A9DF1C500AE3482 /* ConnectionEvent.swift */; };
@@ -56,6 +57,7 @@
 		5607C7122A9FFA6200E90A3B /* PnpIdCharacteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnpIdCharacteristic.swift; sourceTree = "<group>"; };
 		5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownToothbrushService.swift; sourceTree = "<group>"; };
 		5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToothbrushPropertyReader.swift; sourceTree = "<group>"; };
+		5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheralCommunicator.swift; sourceTree = "<group>"; };
 		564E093F2A9B3C0900AE3482 /* Toothbrush Hacker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Toothbrush Hacker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toothbrush_HackerApp.swift; sourceTree = "<group>"; };
 		564E09442A9B3C0900AE3482 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -72,7 +74,7 @@
 		564E09722A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacteristicFormatDescriptor.swift; sourceTree = "<group>"; };
 		564E09762A9D6E3F00AE3482 /* BlePeripheralConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheralConnection.swift; sourceTree = "<group>"; };
 		564E097B2A9D755100AE3482 /* StringAsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringAsError.swift; sourceTree = "<group>"; };
-		564E097D2A9D775400AE3482 /* BlePeripheralCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheralCommunicator.swift; sourceTree = "<group>"; };
+		564E097D2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheralCommunicator_Published.swift; sourceTree = "<group>"; };
 		564E097F2A9DC2FE00AE3482 /* DiscoveredPeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveredPeripheral.swift; sourceTree = "<group>"; };
 		564E09832A9DE59100AE3482 /* BleCentralManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleCentralManager.swift; sourceTree = "<group>"; };
 		564E09852A9DF1C500AE3482 /* ConnectionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionEvent.swift; sourceTree = "<group>"; };
@@ -191,10 +193,11 @@
 				564E097F2A9DC2FE00AE3482 /* DiscoveredPeripheral.swift */,
 				564E09832A9DE59100AE3482 /* BleCentralManager.swift */,
 				564E09762A9D6E3F00AE3482 /* BlePeripheralConnection.swift */,
-				564E097D2A9D775400AE3482 /* BlePeripheralCommunicator.swift */,
+				564E097D2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift */,
 				564E096B2A9C883800AE3482 /* Services */,
 				564E096E2A9C8A5300AE3482 /* Characteristics */,
 				564E09712A9C8ABB00AE3482 /* Descriptors */,
+				5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */,
 			);
 			path = Ble;
 			sourceTree = "<group>";
@@ -352,7 +355,7 @@
 				564E098C2A9E87E200AE3482 /* BleDescriptor.swift in Sources */,
 				564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */,
 				564E097C2A9D755100AE3482 /* StringAsError.swift in Sources */,
-				564E097E2A9D775400AE3482 /* BlePeripheralCommunicator.swift in Sources */,
+				564E097E2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift in Sources */,
 				564E09682A9C4F8700AE3482 /* ConnectedViewModel.swift in Sources */,
 				564E09862A9DF1C500AE3482 /* ConnectionEvent.swift in Sources */,
 				564E09662A9C4C0F00AE3482 /* AppModel.swift in Sources */,
@@ -361,6 +364,7 @@
 				564E09702A9C8A7200AE3482 /* BatteryLevelCharacteristic.swift in Sources */,
 				564E09902A9EA69400AE3482 /* ClientCharacteristicConfigurationDescriptor.swift in Sources */,
 				564E09952A9F2F9100AE3482 /* DeviceInfoReader.swift in Sources */,
+				5607C71E2AA6C00800E90A3B /* BlePeripheralCommunicator.swift in Sources */,
 				564E09882A9E87C000AE3482 /* BleService.swift in Sources */,
 				5607C70F2A9FFA3A00E90A3B /* SystemIdCharacteristic.swift in Sources */,
 				564E098A2A9E87D200AE3482 /* BleCharacteristic.swift in Sources */,

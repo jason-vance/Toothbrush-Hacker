@@ -42,13 +42,13 @@ class BlePeripheralDeviceInfoReader: DeviceBasicInfoReader, DeviceVersionInfoRea
     var ieeeRegulatoryCertificationPublisher: Published<Int?>.Publisher { deviceInfoService.ieeeRegulatoryCertificationPublisher }
     var pnpIdPublisher: Published<Int?>.Publisher { deviceInfoService.pnpIdPublisher }
 
-    let deviceCommunicator: BlePeripheralCommunicator
+    let deviceCommunicator: BlePeripheralCommunicator_Published
     let deviceInfoService: DeviceInformationService
     
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        deviceCommunicator = BlePeripheralCommunicator_Published.getOrCreate(from: device)
         deviceInfoService = DeviceInformationService(communicator: deviceCommunicator)
     }
     

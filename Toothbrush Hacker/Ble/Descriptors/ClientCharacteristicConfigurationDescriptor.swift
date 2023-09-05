@@ -15,7 +15,7 @@ class ClientCharacteristicConfigurationDescriptor: BleDescriptor {
     override init?(
         cbDescriptor: CBDescriptor,
         bleCharacteristic: BleCharacteristicProtocol,
-        communicator: BlePeripheralCommunicator
+        communicator: BlePeripheralCommunicator_Published
     ) {
         guard cbDescriptor.uuid == Self.uuid else { return nil }
         super.init(cbDescriptor: cbDescriptor, bleCharacteristic: bleCharacteristic, communicator: communicator)

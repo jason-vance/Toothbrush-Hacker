@@ -12,7 +12,7 @@ class SystemIdCharacteristic: BleCharacteristic<Int> {
     
     static let uuid = CBUUID(string: "2A23")
     
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(
             uuid: Self.uuid,
             communicator: communicator,

@@ -24,15 +24,15 @@ protocol BleCharacteristicProtocol : AnyObject {
     
     func onAddedTo(bleService: BleService)
 
-    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
+    func communicator(_ communicator: BlePeripheralCommunicator_Published, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
     
-    func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor?
+    func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator_Published) -> BleDescriptor?
 }
 
 class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     let uuid: CBUUID
-    unowned let communicator: BlePeripheralCommunicator
+    unowned let communicator: BlePeripheralCommunicator_Published
     let readValueOnDiscover: Bool
     let setToNotify: Bool
 
@@ -46,7 +46,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     private var subs: Set<AnyCancellable> = []
 
-    init(uuid: CBUUID, communicator: BlePeripheralCommunicator, readValueOnDiscover: Bool = false, setToNotify: Bool = false) {
+    init(uuid: CBUUID, communicator: BlePeripheralCommunicator_Published, readValueOnDiscover: Bool = false, setToNotify: Bool = false) {
         self.uuid = uuid
         self.communicator = communicator
         self.readValueOnDiscover = readValueOnDiscover
@@ -130,7 +130,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         }
     }
     
-    final func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService) {
+    final func communicator(_ communicator: BlePeripheralCommunicator_Published, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService) {
         discovered(characteristic: (cbCharacteristic, nil))
     }
     
@@ -162,7 +162,7 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
         return nil
     }
     
-    open func createDescriptor(with: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor? { nil }
+    open func createDescriptor(with: CBDescriptor, communicator: BlePeripheralCommunicator_Published) -> BleDescriptor? { nil }
     
     var canBroadcast: Bool {
         guard let properties = properties else { return false }

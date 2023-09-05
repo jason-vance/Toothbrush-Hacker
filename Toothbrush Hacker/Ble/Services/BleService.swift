@@ -13,12 +13,12 @@ class BleService {
     
     let uuid: CBUUID
     let bleCharacteristics: [CBUUID:BleCharacteristicProtocol]
-    unowned let communicator: BlePeripheralCommunicator
+    unowned let communicator: BlePeripheralCommunicator_Published
     private(set) weak var cbService: CBService? = nil
     
     private var subs: Set<AnyCancellable> = []
     
-    init(uuid: CBUUID, bleCharacteristics: [BleCharacteristicProtocol], communicator: BlePeripheralCommunicator) {
+    init(uuid: CBUUID, bleCharacteristics: [BleCharacteristicProtocol], communicator: BlePeripheralCommunicator_Published) {
         var bleCharacteristicsDict: [CBUUID:BleCharacteristicProtocol] = [:]
         bleCharacteristics.forEach {
             bleCharacteristicsDict[$0.uuid] = $0
@@ -55,7 +55,7 @@ class BleService {
         }
     }
     
-    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbService: CBService) {
+    func communicator(_ communicator: BlePeripheralCommunicator_Published, discovered cbService: CBService) {
         discovered(service: (cbService, nil))
     }
 }

@@ -32,7 +32,7 @@ class DeviceInformationService: BleService {
     private let ieeeRegulatoryCertificationCharacteristic: IeeeRegulatoryCertificationCharacteristic
     private let pnpIdCharacteristic: PnpIdCharacteristic
 
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         manufacturerNameCharacteristic = ManufacturerNameCharacteristic(communicator: communicator)
         modelNumberCharacteristic = ModelNumberCharacteristic(communicator: communicator)
         serialNumberCharacteristic = SerialNumberCharacteristic(communicator: communicator)

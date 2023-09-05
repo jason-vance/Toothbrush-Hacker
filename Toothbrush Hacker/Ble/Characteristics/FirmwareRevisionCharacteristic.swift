@@ -12,7 +12,7 @@ class FirmwareRevisionCharacteristic: BleCharacteristic<String> {
     
     static let uuid = CBUUID(string: "2A26")
     
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(
             uuid: Self.uuid,
             communicator: communicator,

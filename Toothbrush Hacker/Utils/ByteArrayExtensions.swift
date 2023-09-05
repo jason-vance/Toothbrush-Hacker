@@ -19,7 +19,7 @@ extension Array<UInt8> {
         return array
     }
     
-    func getValue<Value>(_ type: Value.Type, at start: Int, lenient: Bool = true) -> Value? where Value: FixedWidthInteger {
+    func getValue<Value>(_ type: Value.Type, at start: Int = 0, lenient: Bool = true) -> Value? where Value: FixedWidthInteger {
         var length = type.bitWidth / UInt8.bitWidth
         if lenient {
             let lengthToEnd = self.count - start

@@ -11,7 +11,7 @@ import Combine
 
 class ToothbrushPropertyReader {
 
-    let deviceCommunicator: BlePeripheralCommunicator
+    let deviceCommunicator: BlePeripheralCommunicator_Published
     let unknownToothbrushService0001: UnknownToothbrushService
     let unknownToothbrushService0002: UnknownToothbrushService
     let unknownToothbrushService0003: UnknownToothbrushService
@@ -19,7 +19,7 @@ class ToothbrushPropertyReader {
     var subs: Set<AnyCancellable> = []
     
     init(device: CBPeripheral) {
-        deviceCommunicator = BlePeripheralCommunicator.getOrCreate(from: device)
+        deviceCommunicator = BlePeripheralCommunicator_Published.getOrCreate(from: device)
         unknownToothbrushService0001 = UnknownToothbrushService(
             uuid: UnknownToothbrushService.uuid0001,
             communicator: deviceCommunicator)

@@ -12,7 +12,7 @@ class BatteryLevelCharacteristic: BleCharacteristic<Int> {
     
     static let uuid = CBUUID(string: "2A19")
     
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         super.init(
             uuid: Self.uuid,
             communicator: communicator,

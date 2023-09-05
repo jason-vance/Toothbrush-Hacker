@@ -16,7 +16,7 @@ class BatteryService: BleService {
     
     private let batteryLevelCharacteristic: BatteryLevelCharacteristic
     
-    init(communicator: BlePeripheralCommunicator) {
+    init(communicator: BlePeripheralCommunicator_Published) {
         batteryLevelCharacteristic = BatteryLevelCharacteristic(communicator: communicator)
         super.init(
             uuid: Self.uuid,
