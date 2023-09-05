@@ -30,7 +30,7 @@ class ConnectedViewModel: ObservableObject {
     let deviceBasicInfoReader: DeviceBasicInfoReader
     let deviceVersionInfoReader: DeviceVersionInfoReader
     let deviceExtendedInfoReader: DeviceExtendedInfoReader
-    let toothbrushPropertyReader: ToothbrushPropertyReader
+//    let toothbrushPropertyReader: ToothbrushPropertyReader
 
     var subs: Set<AnyCancellable> = []
 
@@ -39,15 +39,15 @@ class ConnectedViewModel: ObservableObject {
         batteryMonitor: BatteryMonitor,
         deviceBasicInfoReader: DeviceBasicInfoReader,
         deviceVersionInfoReader: DeviceVersionInfoReader,
-        deviceExtendedInfoReader: DeviceExtendedInfoReader,
-        toothbrushPropertyReader: ToothbrushPropertyReader
+        deviceExtendedInfoReader: DeviceExtendedInfoReader
+//        toothbrushPropertyReader: ToothbrushPropertyReader
     ) {
         self.toothbrushConnection = toothbrushConnection
         self.batteryMonitor = batteryMonitor
         self.deviceBasicInfoReader = deviceBasicInfoReader
         self.deviceVersionInfoReader = deviceVersionInfoReader
         self.deviceExtendedInfoReader = deviceExtendedInfoReader
-        self.toothbrushPropertyReader = toothbrushPropertyReader
+//        self.toothbrushPropertyReader = toothbrushPropertyReader
 
         setupSubscribers()
     }
@@ -104,15 +104,15 @@ class ConnectedViewModel: ObservableObject {
     }
     
     func fetchDeviceBasicInfo() {
-        deviceBasicInfoReader.start()
+        deviceBasicInfoReader.fetchBasicInfo()
     }
     
     func fetchDeviceVersionInfo() {
-        deviceVersionInfoReader.start()
+        deviceVersionInfoReader.fetchVersionInfo()
     }
     
     func fetchDeviceExtendedInfo() {
-        deviceExtendedInfoReader.start()
+        deviceExtendedInfoReader.fetchExtendedInfo()
     }
     
     func fetchBatteryLevel() {
