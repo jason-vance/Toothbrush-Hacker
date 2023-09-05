@@ -73,10 +73,6 @@ class BleDescriptor {
         valueBytes = [UInt8](data)
         printValueBytes()
     }
-    
-    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbDescriptor: CBDescriptor) {
-        updateValue(descriptor: (cbDescriptor, nil))
-    }
 }
 
 extension BleDescriptor: Equatable {

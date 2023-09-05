@@ -25,8 +25,6 @@ protocol BleCharacteristicProtocol : AnyObject {
     func onAddedTo(bleService: BleService)
 
     func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService)
-    func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic)
-    func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic)
     
     func createDescriptor(with cbDescriptor: CBDescriptor, communicator: BlePeripheralCommunicator) -> BleDescriptor?
 }
@@ -134,14 +132,6 @@ class BleCharacteristic<ValueType>: BleCharacteristicProtocol {
     
     final func communicator(_ communicator: BlePeripheralCommunicator, discovered cbCharacteristic: CBCharacteristic, for bleService: BleService) {
         discovered(characteristic: (cbCharacteristic, nil))
-    }
-    
-    final func communicator(_ communicator: BlePeripheralCommunicator, discovered cbDescriptor: CBDescriptor, for cbCharacteristic: CBCharacteristic) {
-        discovered(descriptor: (cbDescriptor, nil))
-    }
-    
-    final func communicator(_ communicator: BlePeripheralCommunicator, receivedValueUpdateFor cbCharacteristic: CBCharacteristic) {
-        updateValue(characteristic: (cbCharacteristic, nil))
     }
     
     //TODO: Format this value using the format descriptor (maybe just the exponent)
