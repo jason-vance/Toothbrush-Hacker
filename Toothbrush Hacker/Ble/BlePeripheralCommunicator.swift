@@ -130,10 +130,11 @@ public actor BlePeripheralCommunicator: NSObject {
         }
     }
     
-    public func readCharacteristicValue(
+    public func readCharacteristicValue<ValueType>(
         _ characteristicUuid: CBUUID,
-        inService serviceUuid: CBUUID
-    ) async throws -> [UInt8] {
+        inService serviceUuid: CBUUID,
+        as valueType: ValueType.Type = [UInt8].self
+    ) async throws -> ValueType {
         defer {
             readValueContinuation = nil
             readValueUuid = nil
@@ -146,11 +147,46 @@ public actor BlePeripheralCommunicator: NSObject {
         
         let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
         //TODO: Check properties contains `read`
-        return try await withCheckedThrowingContinuation {
+        let valueBytes = try await withCheckedThrowingContinuation {
             readValueContinuation = $0
             print("Reading value of \"\(characteristicUuid)\"")
             peripheral.readValue(for: characteristic)
         }
+        
+        guard let rv = format(valueBytes, as: valueType) else {
+            throw "Bytes \(valueBytes.toString()) could not be formatted as \(String(describing: valueType))"
+        }
+        
+        return rv
+    }
+    
+    //TODO: Format this value using the format descriptor (maybe just the exponent)
+    private func format<ValueType>(_ valueBytes: [UInt8], as valueType: ValueType.Type) -> ValueType? {
+        if valueType == [UInt8].self {
+            return valueBytes as? ValueType
+        }
+        
+        if valueType == Bool.self {
+            guard let value = valueBytes.getValue(UInt8.self, at: 0) else { return nil }
+            return (value != 0) as? ValueType
+        }
+        
+        if valueType == Int.self {
+            return valueBytes.getValue(Int.self, at: 0) as? ValueType
+        }
+        
+        if valueType == String.self {
+            //TODO: Extend this to properly handle utf16 strings (prob should look at the format descriptor)
+            if let value = String(bytes: valueBytes, encoding: .utf8) {
+                return value as? ValueType
+            }
+            if let value = String(bytes: valueBytes, encoding: .utf16) {
+                return value as? ValueType
+            }
+        }
+
+        print("BlePeripheralCommunicator.format(valueBytes: [UInt8]) can't handle type: \(String(describing: valueType))")
+        return nil
     }
     
     private func readDescriptorValue(

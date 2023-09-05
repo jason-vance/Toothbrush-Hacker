@@ -30,15 +30,12 @@ class BlePeripheralBatteryMonitor: BatteryMonitor {
     func fetchCurrentBatteryLevel() {
         Task{
             do {
-                let bytes = try await deviceCommunicator.readCharacteristicValue(
+                let batteryLevelInt = try await deviceCommunicator.readCharacteristicValue(
                     BatteryLevelCharacteristic.uuid,
-                    inService: BatteryService.uuid
+                    inService: BatteryService.uuid,
+                    as: Int.self
                 )
-                if let batteryLevelInt = bytes.getValue(Int.self) {
-                    currentBatteryLevel = Double(batteryLevelInt) / 100.0
-                } else {
-                    print("Something went wrong parsing those bytes")
-                }
+                currentBatteryLevel = Double(batteryLevelInt) / 100.0
             } catch {
                 print("Error in readCurrentBatteryLevel: \(error.localizedDescription)")
             }
