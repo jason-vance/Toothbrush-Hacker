@@ -11,6 +11,7 @@ import CoreBluetooth
 
 protocol BatteryMonitor {
     var batteryLevelPublisher: Published<Double?>.Publisher { get }
+    func start()
 }
 
 class BlePeripheralBatteryMonitor: BatteryMonitor {
@@ -28,9 +29,6 @@ class BlePeripheralBatteryMonitor: BatteryMonitor {
         batteryService = BatteryService(communicator: deviceCommunicator)
         
         setupBatteryLevelSub()
-        Task{
-            await deviceCommunicator.register(bleServices: [batteryService])
-        }        
     }
     
     private func setupBatteryLevelSub() {
@@ -38,5 +36,11 @@ class BlePeripheralBatteryMonitor: BatteryMonitor {
             .compactMap { $0 }
             .sink { self.currentBatteryLevel = Double($0) / 100.0 }
             .store(in: &subs)
+    }
+    
+    func start() {
+        Task{
+            await deviceCommunicator.register(bleServices: [batteryService])
+        }
     }
 }

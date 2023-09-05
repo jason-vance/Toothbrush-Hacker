@@ -31,7 +31,10 @@ struct ConnectedView: View {
     var body: some View {
         ScrollView {
             VStack {
-                DeviceInformationCard()
+                ConnectedCard()
+                DeviceBasicInformationCard()
+                DeviceVersionInformationCard()
+                DeviceExtendedInformationCard()
                 BatteryLevelCard()
                 DisconnectButton()
             }
@@ -44,16 +47,53 @@ struct ConnectedView: View {
         .alert(model.alertMessage, isPresented: $model.showAlert) {}
     }
     
-    @ViewBuilder func DeviceInformationCard() -> some View {
+    @ViewBuilder func ConnectedCard() -> some View {
+        Text("Connected")
+            .font(.title.bold())
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background {
+                CardBackground()
+            }
+            .padding(.horizontal)
+    }
+    
+    @ViewBuilder func DeviceBasicInformationCard() -> some View {
         VStack(spacing: 16) {
-            Text("Connected")
-                .font(.title.bold())
             DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
             DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "--")
             DeviceInfoLabel("Serial Number:", value: model.serialNumber ?? "--")
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            CardBackground()
+        }
+        .padding(.horizontal)
+        .onTapGesture {
+            model.fetchDeviceBasicInfo()
+        }
+    }
+    
+    @ViewBuilder func DeviceVersionInformationCard() -> some View {
+        VStack(spacing: 16) {
             DeviceInfoLabel("Software Revision:", value: model.softwareRevision ?? "--")
             DeviceInfoLabel("Firmware Revision:", value: model.firmwareRevision ?? "--")
             DeviceInfoLabel("Hardware Revision:", value: model.hardwareRevision ?? "--")
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            CardBackground()
+        }
+        .padding(.horizontal)
+        .onTapGesture {
+            model.fetchDeviceVersionInfo()
+        }
+    }
+    
+    @ViewBuilder func DeviceExtendedInformationCard() -> some View {
+        VStack(spacing: 16) {
             DeviceInfoLabel("System Id:", value: model.systemId != nil ? "\(model.systemId!)" : "--")
             DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification != nil ? "\(model.ieeeCertification!)" : "--")
             DeviceInfoLabel("PnP Id:", value: model.pnpId != nil ? "\(model.pnpId!)" : "--")
@@ -64,6 +104,9 @@ struct ConnectedView: View {
             CardBackground()
         }
         .padding(.horizontal)
+        .onTapGesture {
+            model.fetchDeviceExtendedInfo()
+        }
     }
     
     @ViewBuilder func DeviceInfoLabel(_ label: String, value: String) -> some View {
@@ -88,6 +131,9 @@ struct ConnectedView: View {
             CardBackground()
         }
         .padding(.horizontal)
+        .onTapGesture {
+            model.fetchBatteryLevel()
+        }
     }
     
     @ViewBuilder func DisconnectButton() -> some View {

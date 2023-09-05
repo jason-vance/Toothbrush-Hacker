@@ -103,6 +103,22 @@ class ConnectedViewModel: ObservableObject {
             .store(in: &subs)
     }
     
+    func fetchDeviceBasicInfo() {
+        deviceBasicInfoReader.start()
+    }
+    
+    func fetchDeviceVersionInfo() {
+        deviceVersionInfoReader.start()
+    }
+    
+    func fetchDeviceExtendedInfo() {
+        deviceExtendedInfoReader.start()
+    }
+    
+    func fetchBatteryLevel() {
+        batteryMonitor.start()
+    }
+    
     func disconnect() {
         Task {
             do {
