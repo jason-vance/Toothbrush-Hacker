@@ -16,6 +16,7 @@
 		5607C7172AA06B5D00E90A3B /* UnknownToothbrushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */; };
 		5607C7192AA06C1000E90A3B /* ToothbrushPropertyReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */; };
 		5607C71E2AA6C00800E90A3B /* BlePeripheralCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */; };
+		5607C7202AA80DBC00E90A3B /* BleNotificationsRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5607C71F2AA80DBC00E90A3B /* BleNotificationsRegistration.swift */; };
 		564E09432A9B3C0900AE3482 /* Toothbrush_HackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */; };
 		564E09452A9B3C0900AE3482 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564E09442A9B3C0900AE3482 /* ScannerView.swift */; };
 		564E09472A9B3C0B00AE3482 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 564E09462A9B3C0B00AE3482 /* Assets.xcassets */; };
@@ -58,6 +59,7 @@
 		5607C7162AA06B5D00E90A3B /* UnknownToothbrushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownToothbrushService.swift; sourceTree = "<group>"; };
 		5607C7182AA06C1000E90A3B /* ToothbrushPropertyReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToothbrushPropertyReader.swift; sourceTree = "<group>"; };
 		5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlePeripheralCommunicator.swift; sourceTree = "<group>"; };
+		5607C71F2AA80DBC00E90A3B /* BleNotificationsRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleNotificationsRegistration.swift; sourceTree = "<group>"; };
 		564E093F2A9B3C0900AE3482 /* Toothbrush Hacker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Toothbrush Hacker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		564E09422A9B3C0900AE3482 /* Toothbrush_HackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toothbrush_HackerApp.swift; sourceTree = "<group>"; };
 		564E09442A9B3C0900AE3482 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -194,10 +196,11 @@
 				564E09832A9DE59100AE3482 /* BleCentralManager.swift */,
 				564E09762A9D6E3F00AE3482 /* BlePeripheralConnection.swift */,
 				564E097D2A9D775400AE3482 /* BlePeripheralCommunicator_Published.swift */,
+				5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */,
+				5607C71F2AA80DBC00E90A3B /* BleNotificationsRegistration.swift */,
 				564E096B2A9C883800AE3482 /* Services */,
 				564E096E2A9C8A5300AE3482 /* Characteristics */,
 				564E09712A9C8ABB00AE3482 /* Descriptors */,
-				5607C71D2AA6C00800E90A3B /* BlePeripheralCommunicator.swift */,
 			);
 			path = Ble;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				564E09732A9C8AE700AE3482 /* CharacteristicFormatDescriptor.swift in Sources */,
 				564E09772A9D6E3F00AE3482 /* BlePeripheralConnection.swift in Sources */,
 				5607C7092A9FF9F700E90A3B /* HardwareRevisionCharacteristic.swift in Sources */,
+				5607C7202AA80DBC00E90A3B /* BleNotificationsRegistration.swift in Sources */,
 				5607C7192AA06C1000E90A3B /* ToothbrushPropertyReader.swift in Sources */,
 				564E09972A9F2FF400AE3482 /* DeviceInformationService.swift in Sources */,
 				564E099B2A9F3CA500AE3482 /* ModelNumberCharacteristic.swift in Sources */,

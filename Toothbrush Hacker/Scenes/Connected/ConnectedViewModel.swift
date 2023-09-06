@@ -12,6 +12,9 @@ import Combine
 class ConnectedViewModel: ObservableObject {
     
     @Published var currentBatteryLevel: Double? = nil
+    @Published var isListening01: Bool = false
+    @Published var isListening02: Bool = false
+
     @Published var manufacturerName: String? = nil
     @Published var modelNumber: String? = nil
     @Published var serialNumber: String? = nil
@@ -26,7 +29,8 @@ class ConnectedViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     
     let toothbrushConnection: BlePeripheralConnection
-    let batteryMonitor: BatteryMonitor
+    let batteryMonitor01: BatteryMonitor
+    let batteryMonitor02: BatteryMonitor
     let deviceBasicInfoReader: DeviceBasicInfoReader
     let deviceVersionInfoReader: DeviceVersionInfoReader
     let deviceExtendedInfoReader: DeviceExtendedInfoReader
@@ -34,20 +38,13 @@ class ConnectedViewModel: ObservableObject {
 
     var subs: Set<AnyCancellable> = []
 
-    init(
-        toothbrushConnection: BlePeripheralConnection,
-        batteryMonitor: BatteryMonitor,
-        deviceBasicInfoReader: DeviceBasicInfoReader,
-        deviceVersionInfoReader: DeviceVersionInfoReader,
-        deviceExtendedInfoReader: DeviceExtendedInfoReader
-//        toothbrushPropertyReader: ToothbrushPropertyReader
-    ) {
+    init(toothbrushConnection: BlePeripheralConnection) {
         self.toothbrushConnection = toothbrushConnection
-        self.batteryMonitor = batteryMonitor
-        self.deviceBasicInfoReader = deviceBasicInfoReader
-        self.deviceVersionInfoReader = deviceVersionInfoReader
-        self.deviceExtendedInfoReader = deviceExtendedInfoReader
-//        self.toothbrushPropertyReader = toothbrushPropertyReader
+        batteryMonitor01 = BlePeripheralBatteryMonitor(device: toothbrushConnection.peripheral)
+        batteryMonitor02 = BlePeripheralBatteryMonitor(device: toothbrushConnection.peripheral)
+        deviceBasicInfoReader = BlePeripheralDeviceInfoReader(device: toothbrushConnection.peripheral)
+        deviceVersionInfoReader = BlePeripheralDeviceInfoReader(device: toothbrushConnection.peripheral)
+        deviceExtendedInfoReader = BlePeripheralDeviceInfoReader(device: toothbrushConnection.peripheral)
 
         setupSubscribers()
     }
@@ -58,9 +55,21 @@ class ConnectedViewModel: ObservableObject {
     }
     
     private func monitorBatteryLevel() {
-        batteryMonitor.batteryLevelPublisher
+        batteryMonitor01.batteryLevelPublisher
             .receive(on: RunLoop.main)
             .sink { self.currentBatteryLevel = $0 }
+            .store(in: &subs)
+        batteryMonitor02.batteryLevelPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.currentBatteryLevel = $0 }
+            .store(in: &subs)
+        batteryMonitor01.isListeningPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.isListening01 = $0 }
+            .store(in: &subs)
+        batteryMonitor02.isListeningPublisher
+            .receive(on: RunLoop.main)
+            .sink { self.isListening02 = $0 }
             .store(in: &subs)
     }
     
@@ -115,8 +124,12 @@ class ConnectedViewModel: ObservableObject {
         deviceExtendedInfoReader.fetchExtendedInfo()
     }
     
-    func fetchBatteryLevel() {
-        batteryMonitor.fetchCurrentBatteryLevel()
+    func fetchBatteryLevel01() {
+        batteryMonitor01.listenToBatteryLevel()
+    }
+    
+    func fetchBatteryLevel02() {
+        batteryMonitor02.listenToBatteryLevel()
     }
     
     func disconnect() {

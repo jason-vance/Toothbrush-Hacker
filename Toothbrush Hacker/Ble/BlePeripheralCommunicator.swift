@@ -8,7 +8,17 @@
 import Foundation
 import CoreBluetooth
 
+//TODO: Explore writing values w/wo response
 public actor BlePeripheralCommunicator: NSObject {
+    
+    private struct HashableListener: Hashable {
+        let id = UUID()
+        let listener: ([UInt8]) -> Void
+        
+        var hashValue: Int { id.hashValue }
+        func hash(into hasher: inout Hasher) { id.hash(into: &hasher) }
+        static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    }
     
     private static var communicators: [CBPeripheral:BlePeripheralCommunicator] = [:]
     
@@ -42,8 +52,12 @@ public actor BlePeripheralCommunicator: NSObject {
     private var discoverCharacteristicUuid: CBUUID? = nil
     private var discoverDescriptorsContinuation: CheckedContinuation<[CBDescriptor],Error>? = nil
     private var discoverDescriptorsUuid: CBUUID? = nil
+    private var notifyValueContinuation: CheckedContinuation<Void,Error>? = nil
+    private var notifyValueUuid: CBUUID? = nil
     private var readValueContinuation: CheckedContinuation<[UInt8],Error>? = nil
     private var readValueUuid: CBUUID? = nil
+    
+    private var notificationListeners: [CBCharacteristic:Set<HashableListener>] = [:]
 
     private init(connection: BlePeripheralConnection) {
         self.connection = connection
@@ -130,11 +144,88 @@ public actor BlePeripheralCommunicator: NSObject {
         }
     }
     
+    public func enableNotifications(
+        forCharacteristic characteristicUuid: CBUUID,
+        inService serviceUuid: CBUUID,
+        onUpdate: @escaping ([UInt8]) -> Void
+    ) async throws -> NotificationsRegistration {
+        defer {
+            notifyValueContinuation = nil
+            notifyValueUuid = nil
+        }
+        
+        guard notifyValueUuid == nil else {
+            throw "Notification enabling/disabling is already in progress"
+        }
+        notifyValueUuid = characteristicUuid
+        
+        let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
+        let charProps = characteristic.properties
+        guard charProps.contains(.notify) || charProps.contains(.indicate) else {
+            throw "Characteristic '\(characteristicUuid)' cannot notify or indicate"
+        }
+
+        let listener = HashableListener(listener: onUpdate)
+        add(listener: listener, for: characteristic)
+        
+        try await withCheckedThrowingContinuation {
+            notifyValueContinuation = $0
+            print("Enabling notifications for \"\(characteristicUuid)\"")
+            peripheral.setNotifyValue(true, for: characteristic)
+        }
+        
+        return BleNotificationsRegistration {
+            Task {
+                try? await self.remove(listener: listener, for: characteristic)
+            }
+        }
+    }
+    
+    public func disableNotifications(forCharacteristic characteristic: CBCharacteristic) async throws {
+        defer {
+            notifyValueContinuation = nil
+            notifyValueUuid = nil
+        }
+        
+        guard notifyValueUuid == nil else {
+            throw "Notification enabling/disabling is already in progress"
+        }
+        notifyValueUuid = characteristic.uuid
+        
+        let charProps = characteristic.properties
+        guard charProps.contains(.notify) || charProps.contains(.indicate) else {
+            print("Attempted to disable notifications for characteristic '\(characteristic.uuid)' but it can't notify or indicate")
+            return
+        }
+
+        try await withCheckedThrowingContinuation {
+            notifyValueContinuation = $0
+            print("Disabling notifications for \"\(characteristic.uuid)\"")
+            peripheral.setNotifyValue(false, for: characteristic)
+        }
+    }
+    
+    private func add(listener: HashableListener, for characteristic: CBCharacteristic) {
+        if notificationListeners[characteristic] == nil {
+            notificationListeners[characteristic] = []
+        }
+        notificationListeners[characteristic]?.insert(listener)
+    }
+    
+    private func remove(listener: HashableListener, for characteristic: CBCharacteristic) async throws {
+        notificationListeners[characteristic]?.remove(listener)
+        if notificationListeners[characteristic]?.isEmpty == true {
+            print("Disabling notifications for characteristic '\(characteristic.uuid)' because all listeners removed")
+            try await disableNotifications(forCharacteristic: characteristic)
+        }
+    }
+
     public func readCharacteristicValue<ValueType>(
         _ characteristicUuid: CBUUID,
         inService serviceUuid: CBUUID,
         as valueType: ValueType.Type = [UInt8].self
     ) async throws -> ValueType {
+        //TODO: All of these defer blocks need to be re-thought, I'm nil'ing out the continuation
         defer {
             readValueContinuation = nil
             readValueUuid = nil
@@ -146,7 +237,10 @@ public actor BlePeripheralCommunicator: NSObject {
         readValueUuid = characteristicUuid
         
         let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
-        //TODO: Check properties contains `read`
+        guard characteristic.properties.contains(.read) else {
+            throw "Characteristic '\(characteristicUuid)' is not readable"
+        }
+        
         let valueBytes = try await withCheckedThrowingContinuation {
             readValueContinuation = $0
             print("Reading value of \"\(characteristicUuid)\"")
@@ -213,9 +307,6 @@ public actor BlePeripheralCommunicator: NSObject {
             peripheral.readValue(for: descriptor)
         }
     }
-    
-    //TODO: Add notifying values
-    //TODO: Explore writing values w/wo response
 }
 
 extension BlePeripheralCommunicator: CBPeripheralDelegate {
@@ -259,22 +350,58 @@ extension BlePeripheralCommunicator: CBPeripheralDelegate {
         }
     }
     
+    nonisolated public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        Task {
+            guard let notifyValueUuid = await notifyValueUuid else {
+                print("Unexpected didUpdateNotificationStateFor '\(characteristic.uuid)' notifying: \(characteristic.isNotifying)")
+                return
+            }
+            
+            if notifyValueUuid == characteristic.uuid {
+                print("Notification state for \"\(notifyValueUuid)\" was updated succesfully")
+                await notifyValueContinuation?.resume()
+            } else {
+                print("Notification state for \"\(notifyValueUuid)\" failed to update")
+                await notifyValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateNotificationStateFor characteristic")
+            }
+        }
+    }
+    
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         Task {
-            let data = characteristic.value
-            
-            if let readValueUuid = await readValueUuid, readValueUuid == characteristic.uuid {
-                if let data = data {
-                    print("Characteristic value for \"\(readValueUuid)\" was successfully updated")
-                    await readValueContinuation?.resume(returning: [UInt8](data))
-                } else {
-                    print("Characteristic value for \"\(readValueUuid)\" was not updated")
-                    await readValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateValueFor characteristic")
-                }
-            } else {
-                let dataBytes = data == nil ? nil : [UInt8](data!)
-                print("Unexpected characteristic value update for \"\(characteristic.uuid)\" value: \(String(describing: dataBytes?.toString())))")
+            guard characteristic.value != nil else {
+                print("Characteristic value was nil in didUpdateValueFor characteristic")
+                return
             }
+            
+            await updateReadValueContinuation(characteristic, error: error)
+            await updateCharacteristicValueListeners(characteristic, error: error)
+        }
+    }
+    
+    private func updateReadValueContinuation(_ characteristic: CBCharacteristic, error: Error?) {
+        guard let readValueUuid = readValueUuid, readValueUuid == characteristic.uuid else {
+            return
+        }
+        
+        if let data = characteristic.value {
+            print("Characteristic value for \"\(readValueUuid)\" was successfully updated")
+            readValueContinuation?.resume(returning: [UInt8](data))
+        } else {
+            print("Characteristic value for \"\(readValueUuid)\" was not updated")
+            readValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateValueFor characteristic")
+        }
+    }
+    
+    private func updateCharacteristicValueListeners(_ characteristic: CBCharacteristic, error: Error?) {
+        guard let data = characteristic.value else {
+            return
+        }
+        let dataBytes = [UInt8](data)
+        
+        print("Value updated for \"\(characteristic.uuid)\" value: \(dataBytes.toString())")
+        for listener in notificationListeners[characteristic] ?? [] {
+            listener.listener(dataBytes)
         }
     }
     

@@ -10,22 +10,7 @@ import SwiftUI
 struct ConnectedView: View {
     
     @StateObject var model = ConnectedViewModel(
-        toothbrushConnection: AppModel.instance.toothbrushConnection!,
-        batteryMonitor: BlePeripheralBatteryMonitor(
-            device: AppModel.instance.toothbrushConnection!.peripheral
-        ),
-        deviceBasicInfoReader: BlePeripheralDeviceInfoReader(
-            device: AppModel.instance.toothbrushConnection!.peripheral
-        ),
-        deviceVersionInfoReader: BlePeripheralDeviceInfoReader(
-            device: AppModel.instance.toothbrushConnection!.peripheral
-        ),
-        deviceExtendedInfoReader: BlePeripheralDeviceInfoReader(
-            device: AppModel.instance.toothbrushConnection!.peripheral
-//        ),
-//        toothbrushPropertyReader: ToothbrushPropertyReader(
-//            device: AppModel.instance.toothbrushConnection!.peripheral
-        )
+        toothbrushConnection: AppModel.instance.toothbrushConnection!
     )
     
     var body: some View {
@@ -34,8 +19,9 @@ struct ConnectedView: View {
                 ConnectedCard()
                 DeviceBasicInformationCard()
                 DeviceVersionInformationCard()
+                BatteryLevelCard01()
+                BatteryLevelCard02()
                 DeviceExtendedInformationCard()
-                BatteryLevelCard()
                 DisconnectButton()
             }
         }
@@ -60,9 +46,9 @@ struct ConnectedView: View {
     
     @ViewBuilder func DeviceBasicInformationCard() -> some View {
         VStack(spacing: 16) {
-            DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "--")
-            DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "--")
-            DeviceInfoLabel("Serial Number:", value: model.serialNumber ?? "--")
+            DeviceInfoLabel("Manufacturer Name:", value: model.manufacturerName ?? "Tap to read")
+            DeviceInfoLabel("Model Number:", value: model.modelNumber ?? "Tap to read")
+            DeviceInfoLabel("Serial Number:", value: model.serialNumber ?? "Tap to read")
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -77,9 +63,9 @@ struct ConnectedView: View {
     
     @ViewBuilder func DeviceVersionInformationCard() -> some View {
         VStack(spacing: 16) {
-            DeviceInfoLabel("Software Revision:", value: model.softwareRevision ?? "--")
-            DeviceInfoLabel("Firmware Revision:", value: model.firmwareRevision ?? "--")
-            DeviceInfoLabel("Hardware Revision:", value: model.hardwareRevision ?? "--")
+            DeviceInfoLabel("Software Revision:", value: model.softwareRevision ?? "Tap to read")
+            DeviceInfoLabel("Firmware Revision:", value: model.firmwareRevision ?? "Tap to read")
+            DeviceInfoLabel("Hardware Revision:", value: model.hardwareRevision ?? "Tap to read")
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -94,9 +80,9 @@ struct ConnectedView: View {
     
     @ViewBuilder func DeviceExtendedInformationCard() -> some View {
         VStack(spacing: 16) {
-            DeviceInfoLabel("System Id:", value: model.systemId != nil ? "\(model.systemId!)" : "--")
-            DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification != nil ? "\(model.ieeeCertification!)" : "--")
-            DeviceInfoLabel("PnP Id:", value: model.pnpId != nil ? "\(model.pnpId!)" : "--")
+            DeviceInfoLabel("System Id:", value: model.systemId != nil ? "\(model.systemId!)" : "Tap to read")
+            DeviceInfoLabel("IEEE Certification:", value: model.ieeeCertification != nil ? "\(model.ieeeCertification!)" : "Tap to read")
+            DeviceInfoLabel("PnP Id:", value: model.pnpId != nil ? "\(model.pnpId!)" : "Tap to read")
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -119,11 +105,15 @@ struct ConnectedView: View {
         }
     }
     
-    @ViewBuilder func BatteryLevelCard() -> some View {
+    @ViewBuilder func BatteryLevelCard01() -> some View {
         HStack {
-            Text("Battery Level:")
+            Text("Battery Level 01:")
             Spacer()
-            Text(model.currentBatteryLevel?.formatted(.percent) ?? "--")
+            if model.isListening01 {
+                Text(model.currentBatteryLevel?.formatted(.percent) ?? "--")
+            } else {
+                Text("Start listening")
+            }
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -132,7 +122,28 @@ struct ConnectedView: View {
         }
         .padding(.horizontal)
         .onTapGesture {
-            model.fetchBatteryLevel()
+            model.fetchBatteryLevel01()
+        }
+    }
+    
+    @ViewBuilder func BatteryLevelCard02() -> some View {
+        HStack {
+            Text("Battery Level 02:")
+            Spacer()
+            if model.isListening02 {
+                Text(model.currentBatteryLevel?.formatted(.percent) ?? "--")
+            } else {
+                Text("Start listening")
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background {
+            CardBackground()
+        }
+        .padding(.horizontal)
+        .onTapGesture {
+            model.fetchBatteryLevel02()
         }
     }
     
