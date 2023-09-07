@@ -45,17 +45,19 @@ public actor BlePeripheralCommunicator: NSObject {
         }
         return dict
     }
+    private func servicesCharacteristicDict(_ serviceUuid: CBUUID) -> [CBUUID:CBCharacteristic] {
+        var dict: [CBUUID:CBCharacteristic] = [:]
+        peripheralsServiceDict[serviceUuid]?.characteristics?.forEach { characteristic in
+            dict[characteristic.uuid] = characteristic
+        }
+        return dict
+    }
 
-    private var discoverServiceContinuation: CheckedContinuation<CBService,Error>? = nil
-    private var discoverServiceUuid: CBUUID? = nil
-    private var discoverCharacteristicContinuation: CheckedContinuation<CBCharacteristic,Error>? = nil
-    private var discoverCharacteristicUuid: CBUUID? = nil
-    private var discoverDescriptorsContinuation: CheckedContinuation<[CBDescriptor],Error>? = nil
-    private var discoverDescriptorsUuid: CBUUID? = nil
-    private var notifyValueContinuation: CheckedContinuation<Void,Error>? = nil
-    private var notifyValueUuid: CBUUID? = nil
-    private var readValueContinuation: CheckedContinuation<[UInt8],Error>? = nil
-    private var readValueUuid: CBUUID? = nil
+    private var discoverServiceContinuation: (serviceUuid: CBUUID, continuation: CheckedContinuation<CBService,Error>)? = nil
+    private var discoverCharacteristicContinuation: (characteristicUuid: CBUUID, continuation: CheckedContinuation<CBCharacteristic,Error>)? = nil
+    private var discoverDescriptorsContinuation: (characteristicUuid: CBUUID, continuation: CheckedContinuation<[CBDescriptor],Error>)? = nil
+    private var notifyValueContinuation: (characteristicUuid: CBUUID, continuation: CheckedContinuation<Void,Error>)? = nil
+    private var readValueContinuation: (attributeUuid: CBUUID, continuation: CheckedContinuation<[UInt8],Error>)? = nil
     
     private var notificationListeners: [CBCharacteristic:Set<HashableListener>] = [:]
 
@@ -65,26 +67,29 @@ public actor BlePeripheralCommunicator: NSObject {
     }
     
     private func discoverService(_ serviceUuid: CBUUID) async throws -> CBService {
-        defer {
-            discoverServiceContinuation = nil
-            discoverServiceUuid = nil
+        if let knownService = peripheralsServiceDict[serviceUuid] {
+            print("\(serviceUuid) service has already been discovered")
+            return knownService
         }
         
-        guard discoverServiceUuid == nil else {
-            throw "Service discovery is already in progress"
-        }
-        discoverServiceUuid = serviceUuid
-
         return try await withCheckedThrowingContinuation {
-            discoverServiceContinuation = $0
-
-            if let knownService = (peripheral.services?.first { $0.uuid == serviceUuid }) {
-                print("Service \"\(serviceUuid)\" has already been discovered")
-                discoverServiceContinuation?.resume(returning: knownService)
-            } else {
-                print("Discovering service \"\(serviceUuid)\"")
-                peripheral.discoverServices([serviceUuid])
-            }
+            discoverServiceContinuation = (serviceUuid, $0)
+            print("Discovering \(serviceUuid) service")
+            peripheral.discoverServices([serviceUuid])
+        }
+    }
+    
+    private func didDiscoverServices(error: Error?) {
+        guard let discoverServiceContinuation = discoverServiceContinuation else { return }
+        let serviceUuid = discoverServiceContinuation.serviceUuid
+        let continuation = discoverServiceContinuation.continuation
+        
+        if let service = peripheralsServiceDict[serviceUuid] {
+            print("\(serviceUuid) service was successfully discovered")
+            continuation.resume(returning: service)
+        } else {
+            print("\(serviceUuid) service was not discovered")
+            continuation.resume(throwing: error ?? "Unkown error in didDiscoverServices")
         }
     }
     
@@ -92,27 +97,30 @@ public actor BlePeripheralCommunicator: NSObject {
         _ characteristicUuid: CBUUID,
         inService serviceUuid: CBUUID
     ) async throws -> CBCharacteristic {
-        defer {
-            discoverCharacteristicContinuation = nil
-            discoverCharacteristicUuid = nil
+        if let knownCharacteristic = servicesCharacteristicDict(serviceUuid)[characteristicUuid] {
+            print("\(characteristicUuid) characteristic has already been discovered")
+            return knownCharacteristic
         }
-        
-        guard discoverCharacteristicUuid == nil else {
-            throw "Characteric discovery is already in progress"
-        }
-        discoverCharacteristicUuid = characteristicUuid
         
         let service = try await discoverService(serviceUuid)
         return try await withCheckedThrowingContinuation {
-            discoverCharacteristicContinuation = $0
-            
-            if let knownCharacteristic = (service.characteristics?.first { $0.uuid == characteristicUuid }) {
-                print("Characteristic \"\(characteristicUuid)\" has already been discovered")
-                discoverCharacteristicContinuation?.resume(returning: knownCharacteristic)
-            } else {
-                print("Discovering characteristic \"\(characteristicUuid)\" for \"\(serviceUuid)\"")
-                peripheral.discoverCharacteristics([characteristicUuid], for: service)
-            }
+            discoverCharacteristicContinuation = (characteristicUuid, $0)
+            print("Discovering \(characteristicUuid) characteristic")
+            peripheral.discoverCharacteristics([characteristicUuid], for: service)
+        }
+    }
+    
+    private func didDiscoverCharacteristics(for service: CBService, error: Error?) {
+        guard let discoverCharacteristicContinuation = discoverCharacteristicContinuation else { return }
+        let characteristicUuid = discoverCharacteristicContinuation.characteristicUuid
+        let continuation = discoverCharacteristicContinuation.continuation
+        
+        if let characteristic = servicesCharacteristicDict(service.uuid)[characteristicUuid] {
+            print("\(characteristicUuid) characteristic was successfully discovered")
+            continuation.resume(returning: characteristic)
+        } else {
+            print("\(characteristicUuid) characteristic was not discovered")
+            continuation.resume(throwing: error ?? "Unkown error in didDiscoverCharacteristicsFor")
         }
     }
     
@@ -120,27 +128,30 @@ public actor BlePeripheralCommunicator: NSObject {
         forCharacteristic characteristicUuid: CBUUID,
         inService serviceUuid: CBUUID
     ) async throws -> [CBDescriptor] {
-        defer {
-            discoverDescriptorsContinuation = nil
-            discoverDescriptorsUuid = nil
+        if let knownDescriptors = servicesCharacteristicDict(serviceUuid)[characteristicUuid]?.descriptors {
+            print("\(characteristicUuid)'s descriptors have already been discovered")
+            return knownDescriptors
         }
-        
-        guard discoverDescriptorsUuid == nil else {
-            throw "Descriptor discovery is already in progress"
-        }
-        discoverDescriptorsUuid = characteristicUuid
         
         let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
         return try await withCheckedThrowingContinuation {
-            discoverDescriptorsContinuation = $0
-            
-            if let descriptors = characteristic.descriptors {
-                print("Descriptors for \"\(characteristicUuid)\" have already been discovered")
-                discoverDescriptorsContinuation?.resume(returning: descriptors)
-            } else {
-                print("Discovering descriptors for \"\(characteristicUuid)\"")
-                peripheral.discoverDescriptors(for: characteristic)
-            }
+            discoverDescriptorsContinuation = (characteristicUuid, $0)
+            print("Discovering \(characteristicUuid)'s descriptors")
+            peripheral.discoverDescriptors(for: characteristic)
+        }
+    }
+    
+    private func didDiscoverDescriptors(for characteristic: CBCharacteristic, error: Error?) {
+        guard let discoverDescriptorsContinuation = discoverDescriptorsContinuation else { return }
+        let characteristicUuid = discoverDescriptorsContinuation.characteristicUuid
+        let continuation = discoverDescriptorsContinuation.continuation
+        
+        if let descriptors = characteristic.descriptors {
+            print("\(characteristicUuid)'s descriptors were successfully discovered")
+            continuation.resume(returning: descriptors)
+        } else {
+            print("\(characteristicUuid)'s descriptors were not discovered")
+            continuation.resume(throwing: error ?? "Unkown error in didDiscoverDescriptorsFor")
         }
     }
     
@@ -149,30 +160,47 @@ public actor BlePeripheralCommunicator: NSObject {
         inService serviceUuid: CBUUID,
         onUpdate: @escaping ([UInt8]) -> Void
     ) async throws -> NotificationsRegistration {
-        defer {
-            notifyValueContinuation = nil
-            notifyValueUuid = nil
-        }
-        
-        guard notifyValueUuid == nil else {
-            throw "Notification enabling/disabling is already in progress"
-        }
-        notifyValueUuid = characteristicUuid
-        
         let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
+        guard !characteristic.isNotifying else {
+            print("\(characteristicUuid) is already notifying")
+            return add(listener: onUpdate, for: characteristic)
+        }
+        
         let charProps = characteristic.properties
         guard charProps.contains(.notify) || charProps.contains(.indicate) else {
-            throw "Characteristic '\(characteristicUuid)' cannot notify or indicate"
+            throw "\(characteristicUuid) cannot notify or indicate"
         }
 
-        let listener = HashableListener(listener: onUpdate)
-        add(listener: listener, for: characteristic)
-        
         try await withCheckedThrowingContinuation {
-            notifyValueContinuation = $0
-            print("Enabling notifications for \"\(characteristicUuid)\"")
+            notifyValueContinuation = (characteristicUuid, $0)
+            print("Enabling notifications for \(characteristicUuid)")
             peripheral.setNotifyValue(true, for: characteristic)
         }
+        
+        return add(listener: onUpdate, for: characteristic)
+    }
+    
+    public func disableNotifications(forCharacteristic characteristic: CBCharacteristic) async throws {
+        let charProps = characteristic.properties
+        guard charProps.contains(.notify) || charProps.contains(.indicate) else {
+            print("Attempted to disable notifications for \(characteristic.uuid) which can't notify/indicate")
+            return
+        }
+
+        try await withCheckedThrowingContinuation {
+            notifyValueContinuation = (characteristic.uuid, $0)
+            print("Disabling notifications for \(characteristic.uuid)")
+            peripheral.setNotifyValue(false, for: characteristic)
+        }
+    }
+    
+    private func add(listener: @escaping ([UInt8]) -> Void, for characteristic: CBCharacteristic) -> BleNotificationsRegistration {
+        let listener = HashableListener(listener: listener)
+        
+        if notificationListeners[characteristic] == nil {
+            notificationListeners[characteristic] = []
+        }
+        notificationListeners[characteristic]?.insert(listener)
         
         return BleNotificationsRegistration {
             Task {
@@ -181,42 +209,37 @@ public actor BlePeripheralCommunicator: NSObject {
         }
     }
     
-    public func disableNotifications(forCharacteristic characteristic: CBCharacteristic) async throws {
-        defer {
-            notifyValueContinuation = nil
-            notifyValueUuid = nil
-        }
-        
-        guard notifyValueUuid == nil else {
-            throw "Notification enabling/disabling is already in progress"
-        }
-        notifyValueUuid = characteristic.uuid
-        
-        let charProps = characteristic.properties
-        guard charProps.contains(.notify) || charProps.contains(.indicate) else {
-            print("Attempted to disable notifications for characteristic '\(characteristic.uuid)' but it can't notify or indicate")
-            return
-        }
-
-        try await withCheckedThrowingContinuation {
-            notifyValueContinuation = $0
-            print("Disabling notifications for \"\(characteristic.uuid)\"")
-            peripheral.setNotifyValue(false, for: characteristic)
-        }
-    }
-    
-    private func add(listener: HashableListener, for characteristic: CBCharacteristic) {
-        if notificationListeners[characteristic] == nil {
-            notificationListeners[characteristic] = []
-        }
-        notificationListeners[characteristic]?.insert(listener)
-    }
-    
     private func remove(listener: HashableListener, for characteristic: CBCharacteristic) async throws {
         notificationListeners[characteristic]?.remove(listener)
         if notificationListeners[characteristic]?.isEmpty == true {
-            print("Disabling notifications for characteristic '\(characteristic.uuid)' because all listeners removed")
+            print("Disabling notifications for \(characteristic.uuid) because all listeners removed")
             try await disableNotifications(forCharacteristic: characteristic)
+        }
+    }
+    
+    private func didUpdateNotificationState(for characteristic: CBCharacteristic, error: Error?) {
+        guard let notifyValueContinuation = notifyValueContinuation else { return }
+        let characteristicUuid = notifyValueContinuation.characteristicUuid
+        let continuation = notifyValueContinuation.continuation
+        
+        if characteristicUuid == characteristic.uuid {
+            print("Notification state for \(characteristicUuid) was updated succesfully")
+            continuation.resume()
+        } else {
+            print("Notification state for \(characteristicUuid) failed to update")
+            continuation.resume(throwing: error ?? "Unknown error in didUpdateNotificationStateFor characteristic")
+        }
+    }
+    
+    private func updateCharacteristicValueListeners(_ characteristic: CBCharacteristic, error: Error?) {
+        guard let data = characteristic.value else {
+            return
+        }
+        let dataBytes = [UInt8](data)
+        
+        print("\(characteristic.uuid) characteristic updated value: \(dataBytes.toString())")
+        for listener in notificationListeners[characteristic] ?? [] {
+            listener.listener(dataBytes)
         }
     }
 
@@ -225,33 +248,38 @@ public actor BlePeripheralCommunicator: NSObject {
         inService serviceUuid: CBUUID,
         as valueType: ValueType.Type = [UInt8].self
     ) async throws -> ValueType {
-        //TODO: All of these defer blocks need to be re-thought, I'm nil'ing out the continuation
-        defer {
-            readValueContinuation = nil
-            readValueUuid = nil
-        }
-        
-        guard readValueUuid == nil else {
-            throw "Value read is already in progress"
-        }
-        readValueUuid = characteristicUuid
-        
         let characteristic = try await discoverCharacteric(characteristicUuid, inService: serviceUuid)
         guard characteristic.properties.contains(.read) else {
-            throw "Characteristic '\(characteristicUuid)' is not readable"
+            throw "\(characteristicUuid) characteristic is not readable"
         }
         
         let valueBytes = try await withCheckedThrowingContinuation {
-            readValueContinuation = $0
-            print("Reading value of \"\(characteristicUuid)\"")
+            readValueContinuation = (characteristicUuid, $0)
+            print("Reading value of \(characteristicUuid) characteristic")
             peripheral.readValue(for: characteristic)
         }
         
         guard let rv = format(valueBytes, as: valueType) else {
-            throw "Bytes \(valueBytes.toString()) could not be formatted as \(String(describing: valueType))"
+            throw "Bytes \(valueBytes.toString()) could not be formatted as \(valueType)"
         }
         
         return rv
+    }
+    
+    private func updateReadValueContinuation(_ characteristic: CBCharacteristic, error: Error?) {
+        guard let readValueContinuation = readValueContinuation else { return }
+        let characteristicUuid = readValueContinuation.attributeUuid
+        let continuation = readValueContinuation.continuation
+        
+        guard characteristicUuid == characteristic.uuid else { return }
+        
+        if let data = characteristic.value {
+            print("\(characteristicUuid) characteristic's value was successfully read")
+            continuation.resume(returning: [UInt8](data))
+        } else {
+            print("\(characteristicUuid) characteristic's value was not successfully read")
+            continuation.resume(throwing: error ?? "Unknown error in didUpdateValueFor characteristic")
+        }
     }
     
     //TODO: Format this value using the format descriptor (maybe just the exponent)
@@ -279,7 +307,7 @@ public actor BlePeripheralCommunicator: NSObject {
             }
         }
 
-        print("BlePeripheralCommunicator.format(valueBytes: [UInt8]) can't handle type: \(String(describing: valueType))")
+        print("BlePeripheralCommunicator.format(valueBytes: [UInt8]) can't handle type: \(valueType)")
         return nil
     }
     
@@ -288,23 +316,35 @@ public actor BlePeripheralCommunicator: NSObject {
         forCharacteristic characteristicUuid: CBUUID,
         inService serviceUuid: CBUUID
     ) async throws -> [UInt8] {
-        defer {
-            readValueContinuation = nil
-            readValueUuid = nil
-        }
-        
-        guard readValueUuid == nil else {
-            throw "Value read is already in progress"
-        }
-        readValueUuid = descriptorUuid
-
         let descriptors = try await discoverDescriptors(forCharacteristic: characteristicUuid, inService: serviceUuid)
         guard let descriptor = (descriptors.first { $0.uuid == descriptorUuid }) else {
-            throw "Descriptor \"\(descriptorUuid)\" was not found among the descriptors of \"\(characteristicUuid)\""
+            throw "\(descriptorUuid) descriptor was not found in \(characteristicUuid) characteristic"
         }
+        
         return try await withCheckedThrowingContinuation {
-            readValueContinuation = $0
+            readValueContinuation = (descriptorUuid, $0)
             peripheral.readValue(for: descriptor)
+        }
+    }
+    
+    private func didUpdateValue(for descriptor: CBDescriptor, error: Error?) {
+        guard let readValueContinuation = readValueContinuation else { return }
+        let descriptorUuid = readValueContinuation.attributeUuid
+        let continuation = readValueContinuation.continuation
+        
+        let data = descriptor.value as? Data
+        
+        if descriptorUuid == descriptor.uuid {
+            if let data = data {
+                print("\(descriptorUuid) descriptor's value was successfully updated")
+                continuation.resume(returning: [UInt8](data))
+            } else {
+                print("\(descriptorUuid) descriptor's value was not updated")
+                continuation.resume(throwing: error ?? "Unknown error in didUpdateValueFor descriptor")
+            }
+        } else {
+            let dataBytes = data == nil ? nil : [UInt8](data!)
+            print("Unexpected update for \(descriptor.uuid) descriptor's value: \(dataBytes?.toString() ?? "nil")")
         }
     }
 }
@@ -313,114 +353,38 @@ extension BlePeripheralCommunicator: CBPeripheralDelegate {
     
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         Task {
-            guard let serviceUuid = await discoverServiceUuid else { return }
-            if let service = (peripheral.services?.first { $0.uuid == serviceUuid }) {
-                print("Service \"\(serviceUuid)\" was successfully discovered")
-                await discoverServiceContinuation?.resume(returning: service)
-            } else {
-                print("Service \"\(serviceUuid)\" was not discovered")
-                await discoverServiceContinuation?.resume(throwing: error ?? "Unkown error in didDiscoverServices")
-            }
+            await didDiscoverServices(error: error)
         }
     }
-    
+ 
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         Task {
-            guard let characteristicUuid = await discoverCharacteristicUuid else { return }
-            if let characteristic = (service.characteristics?.first { $0.uuid == characteristicUuid }) {
-                print("Characteristic \"\(characteristicUuid)\" was successfully discovered")
-                await discoverCharacteristicContinuation?.resume(returning: characteristic)
-            } else {
-                print("Characteristic \"\(characteristicUuid)\" was not discovered")
-                await discoverCharacteristicContinuation?.resume(throwing: error ?? "Unkown error in didDiscoverCharacteristicsFor")
-            }
+            await didDiscoverCharacteristics(for: service, error: error)
         }
     }
     
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
         Task {
-            guard let characteristicUuid = await discoverDescriptorsUuid else { return }
-            if let descriptors = characteristic.descriptors {
-                print("Descriptors for \"\(characteristicUuid)\" were successfully discovered")
-                await discoverDescriptorsContinuation?.resume(returning: descriptors)
-            } else {
-                print("Descriptors for \"\(characteristicUuid)\" were not discovered")
-                await discoverDescriptorsContinuation?.resume(throwing: error ?? "Unkown error in didDiscoverDescriptorsFor")
-            }
+            await didDiscoverDescriptors(for: characteristic, error: error)
         }
     }
     
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         Task {
-            guard let notifyValueUuid = await notifyValueUuid else {
-                print("Unexpected didUpdateNotificationStateFor '\(characteristic.uuid)' notifying: \(characteristic.isNotifying)")
-                return
-            }
-            
-            if notifyValueUuid == characteristic.uuid {
-                print("Notification state for \"\(notifyValueUuid)\" was updated succesfully")
-                await notifyValueContinuation?.resume()
-            } else {
-                print("Notification state for \"\(notifyValueUuid)\" failed to update")
-                await notifyValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateNotificationStateFor characteristic")
-            }
+            await didUpdateNotificationState(for: characteristic, error: error)
         }
     }
     
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         Task {
-            guard characteristic.value != nil else {
-                print("Characteristic value was nil in didUpdateValueFor characteristic")
-                return
-            }
-            
             await updateReadValueContinuation(characteristic, error: error)
             await updateCharacteristicValueListeners(characteristic, error: error)
         }
     }
     
-    private func updateReadValueContinuation(_ characteristic: CBCharacteristic, error: Error?) {
-        guard let readValueUuid = readValueUuid, readValueUuid == characteristic.uuid else {
-            return
-        }
-        
-        if let data = characteristic.value {
-            print("Characteristic value for \"\(readValueUuid)\" was successfully updated")
-            readValueContinuation?.resume(returning: [UInt8](data))
-        } else {
-            print("Characteristic value for \"\(readValueUuid)\" was not updated")
-            readValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateValueFor characteristic")
-        }
-    }
-    
-    private func updateCharacteristicValueListeners(_ characteristic: CBCharacteristic, error: Error?) {
-        guard let data = characteristic.value else {
-            return
-        }
-        let dataBytes = [UInt8](data)
-        
-        print("Value updated for \"\(characteristic.uuid)\" value: \(dataBytes.toString())")
-        for listener in notificationListeners[characteristic] ?? [] {
-            listener.listener(dataBytes)
-        }
-    }
-    
     nonisolated public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
         Task {
-            let data = descriptor.value as? Data
-            
-            if let readValueUuid = await readValueUuid, readValueUuid == descriptor.uuid {
-                if let data = data {
-                    print("Descriptor value for \"\(readValueUuid)\" was successfully updated")
-                    await readValueContinuation?.resume(returning: [UInt8](data))
-                } else {
-                    print("Descriptor value for \"\(readValueUuid)\" was not updated")
-                    await readValueContinuation?.resume(throwing: error ?? "Unknown error in didUpdateValueFor descriptor")
-                }
-            } else {
-                let dataBytes = data == nil ? nil : [UInt8](data!)
-                print("Unexpected descriptor value update for \"\(descriptor.uuid)\" value: \(String(describing: dataBytes?.toString())))")
-            }
+            await didUpdateValue(for: descriptor, error: error)
         }
     }
 }
